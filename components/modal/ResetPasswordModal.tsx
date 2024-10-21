@@ -1,14 +1,13 @@
 import { Alert, Card, Divider, Modal, ModalProps } from 'antd'
 import  { FC, useState } from 'react'
-import TextInput from '../inputs/TextInput'
 import ExpertButton from '../buttons/ExpertButton'
 import { Formik } from 'formik'
 import * as yup from "yup"
-import { initiateReset } from '@/app/api/services/endpoints/onboarding'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@/redux/store'
 import { setUserDetails } from '@/redux/features/onboardingSlice'
+import TextInput from '../inputs/TextInputs'
 
 interface ResetModalProps extends ModalProps {
     onReset?: (e?: any) => void
@@ -47,9 +46,9 @@ const ResetPasswordModal: FC<ResetModalProps> = ({ onReset , onCancel, ...props}
             dispatch(setUserDetails({ data: { email: v.email,   } }))
             setSubmitting(true)
             setErr('')
-            const { error, response } = await initiateReset(v)
+          
             
-          if(error) return setErr(error)
+        //   if(error) return setErr(error)
            onReset && onReset()
         }}
         initialValues={{email: ''}}
