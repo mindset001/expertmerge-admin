@@ -1,9 +1,9 @@
 import { Card, Divider, Modal, ModalProps } from 'antd'
 import  { FC, useState } from 'react'
-import TextInput from '../inputs/TextInput'
 import ExpertButton from '../buttons/ExpertButton'
 import { Formik } from 'formik'
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import TextInput from '../inputs/TextInputs'
 
 interface ConfirmResetModalProps extends ModalProps {
     onCreatePassword?: (e?: any) => void
