@@ -1,6 +1,5 @@
-import FeedLayout from "@/components/expert-layouts/FeedLayout"
+
 import SectionOne from "./sections/SectionOne"
-import SectionThree from "./sections/SectionThree"
 import SectionTwo from "./sections/SectionTwo"
 import SavedPostLayout from "./SavedPostLayout"
 
