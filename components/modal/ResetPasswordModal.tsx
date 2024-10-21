@@ -6,7 +6,6 @@ import * as yup from "yup"
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@/redux/store'
-import { setUserDetails } from '@/redux/features/onboardingSlice'
 import TextInput from '../inputs/TextInputs'
 
 interface ResetModalProps extends ModalProps {
@@ -43,7 +42,7 @@ const ResetPasswordModal: FC<ResetModalProps> = ({ onReset , onCancel, ...props}
         </div>
         <Formik
         onSubmit={async (v, { setSubmitting }) => {
-            dispatch(setUserDetails({ data: { email: v.email,   } }))
+       
             setSubmitting(true)
             setErr('')
           
