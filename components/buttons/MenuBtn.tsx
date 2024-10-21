@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { NavBarMenuListProps } from '@/types'
 
 const MenuBtn: FC<NavBarMenuListProps> = ({
-  icon,
   text,
   onClick,
   route,
@@ -20,7 +19,7 @@ const MenuBtn: FC<NavBarMenuListProps> = ({
     onClick={onClick}
     whileTap={{ scale: 0.9 }}
     className={`text-[14px] cursor-pointer border-b  ${ pathname === `/${route}` ? 'border-b-[#344054] text-[#344054]' : 'border-b-[#98A2B3] text-[#98A2B3] border-b-[0.5px]'} text-center inline-block min-w-[59px] px-2 font-[500] ${className}`}>
-      <div className='flex justify-center items-center mb-1'><Icon color={`${ pathname === `/${route}` ? '#344054' : '#98A2B3'}`} name={icon} /></div>
+      <div className='flex justify-center items-center mb-1'></div>
       {text || "Home"}
     </motion.div>
   )
