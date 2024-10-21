@@ -5,9 +5,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+} 
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Hide scrollbar for IE, Edge, and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* styles.css */
+.vertical-border .ant-table-thead > tr > th,
+.vertical-border .ant-table-tbody > tr > td {
+    border-right: .5px solid #F0F2F5; /* Adjust the color as needed */
+}
+
+.vertical-border .ant-table-thead > tr > th:last-child,
+.vertical-border .ant-table-tbody > tr > td:last-child {
+    border-right: none; /* Remove the border from the last column */
+}
+
+
+ /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -24,4 +46,4 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-}
+} */
