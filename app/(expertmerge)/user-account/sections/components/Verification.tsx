@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Input, Select, Table, Pagination, Modal } from 'antd';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation'; // Use this to navigate to the new page
 import Icon from '@/components/icons/Icon';
 
 // Sample data (replace with real data or API)
@@ -37,6 +38,7 @@ export default function Verification() {
   const [sortOrder, setSortOrder] = useState('Newest reported');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisible2, setIsModalVisible2] = useState(false);
+  const router = useRouter(); // Use the router hook for navigation
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -57,6 +59,11 @@ export default function Verification() {
     setSortOrder(value);
   };
 
+  const handleRowClick = (record: { id: any; name: any; address: any; phone: any; email: any; }) => {
+    // Navigate to the user's detail page using the dynamic route [id]
+    router.push(`/user-account/sections/${record.id}?name=${record.name}&address=${record.address}&phone=${record.phone}&email=${record.email}`);
+
+  }
   // Calculate the current data to display based on pagination
   const paginatedData = reportedAccountsData.slice(
     (currentPage - 1) * pageSize,
@@ -65,7 +72,20 @@ export default function Verification() {
 
   const columns = [
     { title: 'SN', dataIndex: 'id', key: 'id', width: '10%' },
-    { title: 'Name', dataIndex: 'name', key: 'name', width: '20%' },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: '20%',
+      render: (text: string, record: any) => (
+        <span
+          className=" cursor-pointer"
+          onClick={() => handleRowClick(record)}
+        >
+          {text}
+        </span>
+      ),
+    },
     { title: 'Address', dataIndex: 'address', key: 'address', width: '20%' },
     { title: 'Phone Number', dataIndex: 'phone', key: 'phone', width: '20%' },
     { title: 'Email Address', dataIndex: 'email', key: 'email', width: '20%' },

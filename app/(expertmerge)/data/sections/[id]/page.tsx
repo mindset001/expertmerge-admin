@@ -38,7 +38,7 @@ const UserDetailsPage = () => {
     <div className="p-6">
       {/* Header section */}
       <div className="flex items-center gap-2 border-b mb-4 pb-4">
-        <div className="flex gap-2 items-center" onClick={() => window.history.back()}>
+        <div className="flex gap-2 items-center cursor-pointer" onClick={() => window.history.back()}>
           <Icon name="arrow-left" />
           <p>Back</p>
         </div>
