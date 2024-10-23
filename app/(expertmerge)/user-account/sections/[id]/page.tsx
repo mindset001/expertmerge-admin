@@ -4,6 +4,9 @@ import { useParams, useSearchParams } from 'next/navigation'; // Import both hoo
 import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import NewUsersChart from './components/Chart';
+import Image from 'next/image';
+import Avatar from '@/assets/matcap.jpeg'
+import Land from '@/assets/landingimage.jpg'
 
 
 const UserDetailsPage = () => {
@@ -50,23 +53,52 @@ const UserDetailsPage = () => {
 
 
             {/* User details and active tab content */}
-            <div className="mt-6 py-6">
+            <div className='flex justify-between'>
+                <div className="w-[70%] mt-6 py-6">
 
 
-                {/* <div>
-                    <div className='border-b mb-4 pb-4'>
-                        <h1 className='text-[#1D2739] font-[500] text-[24px]'>Highlights</h1>
+                    {/* <div>
+    <div className='border-b mb-4 pb-4'>
+        <h1 className='text-[#1D2739] font-[500] text-[24px]'>Highlights</h1>
+    </div>
+    <Dashboard />
+</div> */}
+
+                    <div className='mt-6'>
+                        <div className='border-b mb-4 pb-4'>
+                            <h1 className='text-[#1D2739] font-[500] text-[24px]'>Metrics</h1>
+                        </div>
+                        <NewUsersChart />
                     </div>
-                    <Dashboard />
-                </div> */}
 
-                <div className='mt-6'>
-                    <div className='border-b mb-4 pb-4'>
-                        <h1 className='text-[#1D2739] font-[500] text-[24px]'>Metrics</h1>
-                    </div>
-                    <NewUsersChart />
                 </div>
 
+                <div className='w-[20%]'>
+                    <div className='border-b mb-4 pb-4'>
+                        <h1 className='text-[#1D2739] font-[500] text-[24px]'>Recent posts</h1>
+                    </div>
+
+                    <div className='flex gap-2'>
+                        <div className='rounded-full w-[60px] h-[60%]'>
+                            <Image src={Avatar} alt='' className='rounded-full' />
+                        </div>
+                        <div>
+                            <h2 className='text-[#1D2739] text-[14px] font-[500]'>Sodiq Tajudeen</h2>
+                            <p  className='text-[#98A2B3] text-[12px] font-[400]'>Creative Brand/Product Designer | Transforming Vision into Reality | Emp...</p>
+                            <p className='text-[#98A2B3] text-[12px] font-[400]'>12hr</p>
+                        </div>
+
+                    </div>
+                    <div className='flex flex-col gap-4'>
+
+
+                        <p className='text-[#98A2B3] text-[12px] font-[400]'>Expertsmerge full case study is now live on https://Experts.merge/dx9fSR_yzs
+
+                            Expertsmerge.....</p>
+                        <Image src={Land} alt='' />
+                    </div>
+
+                </div>
             </div>
             {/* <p><strong>ID:</strong> {id}</p>
         <p><strong>Name:</strong> {name || 'N/A'}</p>
