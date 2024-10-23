@@ -21,7 +21,7 @@ const ExpertMergeLayout: FC<{children: ReactNode}> =  ({
   return (
     <div className="bg-slate-100">
        <NavBar />
-      <div className="px-[50px] pb-3 bg-slate-100 pt-8 overflow-hidden h-[89vh]">
+      <div className="px-[50px] pb-3 bg-slate-100 pt-8  ">
       { children }
       </div>
     </div>

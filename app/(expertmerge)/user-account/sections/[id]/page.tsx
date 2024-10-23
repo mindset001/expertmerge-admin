@@ -57,12 +57,12 @@ const UserDetailsPage = () => {
                 <div className="w-[70%] mt-6 py-6">
 
 
-                    {/* <div>
+                     <div>
     <div className='border-b mb-4 pb-4'>
         <h1 className='text-[#1D2739] font-[500] text-[24px]'>Highlights</h1>
     </div>
     <Dashboard />
-</div> */}
+</div> 
 
                     <div className='mt-6'>
                         <div className='border-b mb-4 pb-4'>

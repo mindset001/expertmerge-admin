@@ -5,8 +5,8 @@ import ProfessionalProfile from './components/Professional'
 function TotalUser() {
   return (
     <div>
-      <div>
-        {/* <NewUsersChart/> */}
+      <div className='flex flex-col gap-6'>
+        <NewUsersChart/>
         <ProfessionalProfile/>
       </div>
     </div>

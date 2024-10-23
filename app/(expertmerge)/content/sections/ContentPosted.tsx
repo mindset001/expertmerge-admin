@@ -1,9 +1,11 @@
 import React from 'react'
 import Content from './components/Content'
+import NewUsersChart from './Chart'
 
 function ContentPosted() {
   return (
-    <div>
+    <div className='flex flex-col gap-6'>
+      <NewUsersChart/>
       <Content/>
     </div>
   )

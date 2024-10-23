@@ -4,8 +4,8 @@ import GroupsPage from './components/Group'
 
 function TotalGroups() {
   return (
-    <div>
-        {/* <NewUsersChart/> */}
+    <div className='flex flex-col gap-6'>
+        <NewUsersChart/>
         <GroupsPage/>
     </div>
   )

@@ -4,8 +4,8 @@ import NewUsersChart from './Chart'
 
 function TotalForum() {
   return (
-    <div>
-        {/* <NewUsersChart/> */}
+    <div className='flex flex-col gap-6'>
+        <NewUsersChart/>
         <ForumList/>
     </div>
   )
