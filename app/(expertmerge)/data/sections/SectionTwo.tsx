@@ -6,6 +6,7 @@ import Verification from "./components/Verification"
 
 
 
+
 const SectionTwo = () => {
     const { searchFeedSection } = useSelector((state: RootState) => state.searchFeedSlice)
   return (

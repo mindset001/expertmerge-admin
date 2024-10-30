@@ -1,10 +1,11 @@
 'use client';
-import { FC } from 'react';
+import { getContent } from '@/app/api/services/endpoints/content';
+import { FC, useEffect, useState } from 'react';
 
 // Card component to display each statistic
 interface StatCardProps {
   title: string;
-  value: string;
+  value: any;
   icon: JSX.Element;
   growth: string; // Growth percentage
 }
@@ -17,7 +18,7 @@ const StatCard: FC<StatCardProps> = ({ title, value, icon, growth }) => {
         <span className="text-sm text-[#667185] font-[400] text-[14px]">{title}</span>
         <div className='flex gap-2'>
         <p className="text-[18px] font-[700]">{value}</p>
-          <p className="text-[#036B26] text-[12px] font-[400] mt-1 bg-[#E7F6EC] rounded-[10px] flex items-center justify-center px-2">↑ {growth}</p>
+          <p className="text-[#036B26] text-[12px] font-[400] mt-1 bg-[#E7F6EC] rounded-[10px] flex items-center justify-center px-2">↑ {growth} %</p>
         </div>
       </div>
     </div>
@@ -26,13 +27,70 @@ const StatCard: FC<StatCardProps> = ({ title, value, icon, growth }) => {
 
 // Main component to display all the statistics
 const DashboardStats: FC = () => {
+
+  interface UserDetails {
+    users: {
+      total_users: number;
+      user_percent_change: any;
+      // add other fields if necessary
+    };
+    groups: {
+      total_groups: number;
+      group_percent_change: any;
+      // add other fields if necessary
+    };
+    posts: {
+      total_posts: number;
+      post_percent_change: any;
+      // add other fields if necessary
+    };
+    forums: {
+      total_forums: number;
+      forum_percent_change: any;
+      // add other fields if necessary
+    };
+    deletedUsers: {
+      total_deleted_users: number;
+      deleted_users_percent_change: any;
+      // add other fields if necessary
+    };
+    suspended_users: {
+      total_suspended_users: number;
+      suspended_users_percent_change: any;
+      // add other fields if necessary
+    };
+  }
+
+  const [details, setDetails] = useState<UserDetails | null>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { response, error } = await getContent();
+      if (response) {
+        // console.log("API Response:", response.result);
+        setDetails(response.result)
+        // console.log(details , 'real details');
+        
+      } else {
+        console.log("API Error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  useEffect(() => {
+    console.log(details, 'real details'); // This will log whenever `details` updates
+  }, [details]);
+
+
   return (
     <div className="w-full grid grid-cols-6 gap-6">
       <StatCard
         title="Total users"
-        value="9,235,837"
+         value={details?.users?.total_users || 0}
         icon={<i className="fas fa-user"></i>} // Use your preferred icon here
-        growth="15%"
+        growth={details?.users?.user_percent_change || 0}
       />
       <StatCard
         title="Total Groups"
@@ -42,9 +100,9 @@ const DashboardStats: FC = () => {
       />
       <StatCard
         title="Total Forums"
-        value="5,837"
+        value={details?.forums?.total_forums || 0}
         icon={<i className="fas fa-comments"></i>}
-        growth="15%"
+        growth={details?.forums?.forum_percent_change || 0}
       />
       <StatCard
         title="Total Resources"
@@ -60,7 +118,7 @@ const DashboardStats: FC = () => {
       />
       <StatCard
         title="Total accounts suspended"
-        value="37"
+        value={details?.suspended_users?.total_suspended_users || 0}
         icon={<i className="fas fa-flag"></i>}
         growth="15%"
       />

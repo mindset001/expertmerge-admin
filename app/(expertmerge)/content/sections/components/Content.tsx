@@ -1,10 +1,11 @@
 import Image, { StaticImageData } from 'next/image';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Pagination, Select } from 'antd';
 import Avatar from '@/assets/matcap.jpeg';
-import Big from '@/assets/content.png'
+import Big from '@/assets/content.png';
 import Icon from '@/components/icons/Icon';
+import { getAllPosts } from '@/app/api/services/endpoints/content';
 
 type Group = {
     id: number;
@@ -15,63 +16,34 @@ type Group = {
     imageUrl: string | StaticImageData;
 };
 
-const groupData: Group[] = [
-    {
-        id: 1,
-        name: "Designers Talk",
-        members: 171540,
-        description: "A community for Figma users looking to learn from others, share tips and tricks and expand our skillset.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    {
-        id: 2,
-        name: "Users Experience",
-        members: 171540,
-        description: "A community for Figma users looking to learn from others, share tips and tricks and expand our skillset.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    {
-        id: 3,
-        name: "Developers - Android",
-        members: 145000,
-        description: "A community of Android developers sharing tips and resources.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    {
-        id: 4,
-        name: "Friends of Figma",
-        members: 120340,
-        description: "A group for Figma enthusiasts to share designs and ideas.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    {
-        id: 5,
-        name: "Industrial Design",
-        members: 95000,
-        description: "Connecting industrial designers worldwide.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    {
-        id: 6,
-        name: "Art of Fashion",
-        members: 200000,
-        description: "A group for fashion designers and enthusiasts.",
-        location: "Creative Brand/Product Designer | Transforming Vision into Reality | Emp...",
-        imageUrl: Avatar,
-    },
-    // Add more groups as needed
-];
-
 function Content() {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortOrder, setSortOrder] = useState('Newest reported');
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize] = useState(3); // Number of groups per page
+    const [pageSize] = useState(3); // Number of posts per page
+    const [details, setDetails] = useState<Group[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { response, error } = await getAllPosts();
+            if (response) {
+                console.log("group info:", response.data);
+                const dataWithKeys = response.data.map((post: any) => ({
+                    id: post.id,
+                    name: `${post.creator.firstName} ${post.creator.lastName}`,
+                    members: post.members ? post.members.length : 0,
+                    description: (post.regular?.content || post.poll?.content || "No description available"),
+                    location: post.location || "No location provided",
+                    imageUrl: post.creator.profilePicture || Avatar,
+                }));
+                setDetails(dataWithKeys);
+            } else {
+                console.error("API Error:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleSortChange = (value: string) => {
         setSortOrder(value);
@@ -81,22 +53,23 @@ function Content() {
         setSearchTerm(e.target.value);
     };
 
-    // Filter and sort the groupData based on searchTerm and sortOrder
-    const filteredGroups = groupData
-        .filter(group =>
-            group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            group.description.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .sort((a, b) => {
-            if (sortOrder === 'Newest reported') {
-                return b.id - a.id;
-            } else if (sortOrder === 'Oldest reported') {
-                return a.id - b.id;
-            } else if (sortOrder === 'Most reported') {
-                return b.members - a.members;
-            }
-            return 0;
-        });
+    // Filter and sort the details based on searchTerm and sortOrder
+    const filteredGroups = details
+    .filter(post =>
+        (post.name && post.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (post.description && post.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => {
+        if (sortOrder === 'Newest reported') {
+            return b.id - a.id;
+        } else if (sortOrder === 'Oldest reported') {
+            return a.id - b.id;
+        } else if (sortOrder === 'Most reported') {
+            return b.members - a.members;
+        }
+        return 0;
+    });
+
 
     // Pagination Logic
     const indexOfLastGroup = currentPage * pageSize;
@@ -111,16 +84,15 @@ function Content() {
         <div className="border p-4 rounded-lg">
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center">
-                    <h1 className="text-2xl font-bold mr-4 text-[#1D2739]">Content Posted </h1>
+                    <h1 className="text-2xl font-bold mr-4 text-[#1D2739]">Content Posted</h1>
                     <Button
                         icon={<ReloadOutlined />}
                         className="text-gray-500 hover:text-black border-none bg-transparent"
-                        onClick={() => window.location.reload()} // Dummy reload for now
+                        onClick={() => window.location.reload()}
                     />
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* Dropdown for sorting */}
                     <Select
                         defaultValue={sortOrder}
                         onChange={handleSortChange}
@@ -131,7 +103,6 @@ function Content() {
                         <Select.Option value="Most reported">Most reported</Select.Option>
                     </Select>
 
-                    {/* Search bar */}
                     <Input
                         placeholder="Search..."
                         value={searchTerm}
@@ -145,7 +116,7 @@ function Content() {
             {/* Render the current groups */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-6">
                 {currentGroups.map((group) => (
-                    <div key={group.id} className="  bg-white">
+                    <div key={group.id} className="bg-white">
                         <div className="flex space-x-3 p-4">
                             <Image
                                 src={group.imageUrl}
@@ -155,21 +126,15 @@ function Content() {
                                 className="rounded-full h-[50px] w-[50px]"
                             />
                             <div>
-                               <div>
-                               <h2 className=" flex items-center gap-2"><p className='font-semibold'>{group.name}</p> <div><Icon name='blue-check'/></div></h2>
-                               <p className='text-[#98A2B3] text-[10px]'>{group.location}</p>
-                               </div>
-                                <div className='my-4'>
-                                <p className="text-sm text-gray-500">{group.description}</p>
-                                </div>
-                              
-                              
-                            </div>      
-                            
-                        </div>
-                        <div>
-                                <Image src={Big} alt=''/>
+                                <h2 className="flex items-center gap-2">
+                                    <p className="font-semibold">{group.name}</p>
+                                    <Icon name="blue-check" />
+                                </h2>
+                                <p className="text-[#98A2B3] text-[10px]">{group.location}</p>
+                                <p className="my-4 text-sm text-gray-500">{group.description}</p>
                             </div>
+                        </div>
+                        <Image src={Big} alt="" />
                     </div>
                 ))}
             </div>

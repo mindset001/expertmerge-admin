@@ -8,13 +8,14 @@ import { useState } from "react"
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Approved from "./components/Approved"
 import Rejected from "./components/Rejected"
+import Suspended from "../../suspended-account/sections/components/Verification"
 
 
 const SectionTwo = () => {
     const { searchFeedSection } = useSelector((state: RootState) => state.searchFeedSlice)
     const [searchTerm, setSearchTerm] = useState(''); 
     const [sortOrder, setSortOrder] = useState('Newest reported');
-    const [activeSection, setActiveSection] = useState<'verification' | 'approved' | 'rejected'>('verification');
+    const [activeSection, setActiveSection] = useState<'verification' | 'approved' | 'rejected'| 'suspended'>('verification');
     const [isApprovalRequired, setIsApprovalRequired] = useState(true);
 
     // Handle the toggle change
@@ -30,7 +31,7 @@ const SectionTwo = () => {
       setSortOrder(value);
     };
 
-    const handleSectionChange = (section: 'verification' | 'approved' | 'rejected') => {
+    const handleSectionChange = (section: 'verification' | 'approved' | 'rejected'| 'suspended') => {
       setActiveSection(section);
     };
   return (
@@ -54,28 +55,34 @@ const SectionTwo = () => {
         
       </div>
     </div>
-    <div className="border-2  rounded-lg p-6">
+    <div className="border-2  rounded-[10px] p-6">
     <div className="flex justify-between items-center my-8">
     <div className="flex items-center">
             {/* Navigation buttons to switch between sections */}
-            <Button
+            <button
               onClick={() => handleSectionChange('verification')}
-              className={activeSection === 'verification' ? 'bg-[#BDF2F9] text-[#0A424A] font-[500]' : ''}
+              className={activeSection === 'verification' ?  'bg-[#BDF2F9] text-[#0A424A] font-[500] rounded-[4px] p-2 border' : 'border bg-white rounded-[4px] p-2'}
             >
               Sign up Request
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => handleSectionChange('approved')}
-              className={activeSection === 'approved' ? 'bg-[#BDF2F9] text-[#0A424A] font-[500]' : ''}
+              className={activeSection === 'approved' ? 'bg-[#BDF2F9] text-[#0A424A] font-[500] rounded-[4px] p-2 border' : 'border bg-white rounded-[4px] p-2'}
             >
               Approved
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => handleSectionChange('rejected')}
-              className={activeSection === 'rejected' ? 'bg-[#BDF2F9] text-[#0A424A] font-[500]' : ''}
+              className={activeSection === 'rejected' ?  'bg-[#BDF2F9] text-[#0A424A] font-[500] rounded-[4px] p-2 border' : 'border bg-white rounded-[4px] p-2'}
             >
               Rejected
-            </Button>
+            </button>
+            <button
+              onClick={() => handleSectionChange('suspended')}
+              className={activeSection === 'suspended' ?  'bg-[#BDF2F9] text-[#0A424A] font-[500] rounded-[4px] p-2 border' : 'border bg-white rounded-[4px] p-2'}
+            >
+             Suspended Account
+            </button>
 
             <Button
               icon={<ReloadOutlined />}
@@ -110,6 +117,7 @@ const SectionTwo = () => {
        {activeSection === 'verification' && <Verification />}
         {activeSection === 'approved' && <Approved />}
         {activeSection === 'rejected' && <Rejected />}
+        {activeSection === 'suspended' && <Suspended />}
         
     </div>
       

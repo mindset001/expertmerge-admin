@@ -30,7 +30,7 @@ const reportedAccountsData = [
   ];
   
 
-export default function Verification() {
+export default function Suspended() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10); // Number of items per page
   const [searchTerm, setSearchTerm] = useState(''); 
@@ -95,38 +95,7 @@ export default function Verification() {
   return (
     <div className="w-full p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <h1 className="text-2xl font-bold mr-4">Suspended Accounts</h1>
-          <Button
-            icon={<ReloadOutlined />}
-            className="text-gray-500 hover:text-black border-none bg-transparent"
-            onClick={() => window.location.reload()} // Dummy reload for now
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Dropdown for sorting */}
-          <Select
-            defaultValue={sortOrder}
-            onChange={handleSortChange}
-            className="w-[200px] rounded-md"
-          >
-            <Select.Option value="Newest reported">Newest reported</Select.Option>
-            <Select.Option value="Oldest reported">Oldest reported</Select.Option>
-            <Select.Option value="Most reported">Most reported</Select.Option>
-          </Select>
-
-          {/* Search bar */}
-          <Input
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            prefix={<SearchOutlined />}
-            className="w-[250px] rounded-md"
-          />
-        </div>
-      </div>
+     
 
       {/* Table for displaying reported accounts */}
       <Table dataSource={paginatedData} columns={columns} rowKey="id" pagination={false} className='border vertical-border'/>

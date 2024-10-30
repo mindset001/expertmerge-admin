@@ -12,17 +12,16 @@ import Link from 'next/link';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import TextInput from '../inputs/TextInputs';
-import { useRouter } from 'next/navigation'; // Note: Fixed typo "navigate" -> "router"
-import { superLogin } from '@/app/api/services/endpoints/login';
-// Import the API call
+import { useRouter } from 'next/navigation';
+import { adminLogin } from '@/app/api/services/endpoints/login';
 
 const LoginCard = () => {
-    const [password, setPassword] = useState<boolean>(false);
-    const [err, setErr] = useState<string>('');
-    const router = useRouter(); // Fixed typo: navigate -> router
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
     
-    const validateSchema = yup.object().shape({
+    const validationSchema = yup.object().shape({
         email: yup.string().email('Please enter a valid email').required('Email is required'),
         password: yup.string().required('Password is required')
     });
@@ -36,27 +35,37 @@ const LoginCard = () => {
         Use your email address to sign in to your account and manage your role 
         </div>
         
-        {/* Formik form for handling form data */}
         <Formik
             initialValues={{ email: "", password: "" }}
-            validationSchema={validateSchema}
+            validationSchema={validationSchema}
             onSubmit={async (values, { setSubmitting }) => {
                 setSubmitting(true);
-                setErr(''); // Reset error message
+                setErrorMessage('');
                 try {
-                    // Call the API service to perform login
-                    const { response, error } = await superLogin(values);
+                    const { response, error } = await adminLogin(values);
+                    console.log(error);
+                    console.log(response);
+                    
+                    
                     if (error) {
-                        setErr(error); // Set the error message
-                    } else if (response) {
-                        // Successfully logged in, store the user data and redirect
-                        // dispatch(setUserProfile({ data: response })); // If you have user state management
-                        router.push('/dashboard'); // Navigate to home on success
+                        setErrorMessage(error);
+                    } 
+
+                   if (response) {
+                        // Successful login, redirect to dashboard
+                        console.log('successful');
+                        
+                        router.push('/dashboard');
+                        
                     }
-                } catch (err) {
-                    setErr('An unexpected error occurred'); // Handle any unexpected errors
-                }
-                setSubmitting(false); // Reset form submission state
+                    setSubmitting(false);
+                } catch {
+                    setErrorMessage('An unexpected error occurred');
+                   
+                } 
+                // finally {
+                   
+                // }
             }}
         >
          {({ handleChange, handleSubmit, isSubmitting, errors }) => (
@@ -74,25 +83,25 @@ const LoginCard = () => {
                     label="Password"
                     fullWidth
                     wrapperClassName='mt-4'
-                    type={password ? 'text' : 'password'}
-                    suffix={ password ? 
-                        <EyeOutlined onClick={() => setPassword(prev => !prev)} />  
-                        :  
-                        <EyeInvisibleOutlined onClick={() => setPassword(prev  => !prev)} />
+                    type={passwordVisible ? 'text' : 'password'}
+                    suffix={
+                        passwordVisible 
+                        ? <EyeOutlined onClick={() => setPasswordVisible(prev => !prev)} />  
+                        : <EyeInvisibleOutlined onClick={() => setPasswordVisible(prev  => !prev)} />
                     }
                     onChange={handleChange('password')}
                     errorMessage={errors.password}
                 />
                
                 {/* Display error alert if there's an error */}
-                {err && <Alert type="error" showIcon message={err}/>}
+                {errorMessage && <Alert type="error" showIcon message={errorMessage}/>}
 
                 {/* Submit Button */}
                 <div className='py-2 overflow-hidden mt-10'>
                     <ExpertButton
                         text="Sign in"
                         fullWidth
-                        loading={isSubmitting} // Show loading indicator while submitting
+                        loading={isSubmitting}
                         onClick={handleSubmit}
                     />
                 </div>
