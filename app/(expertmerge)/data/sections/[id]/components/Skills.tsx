@@ -3,6 +3,8 @@ import Image, { StaticImageData } from "next/image";
 import Avatar from '@/assets/matcap.jpeg'
 import ExpertButton from "@/components/buttons/ExpertButton";
 import Cert from '@/assets/certificate.jpg'
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 // Define the work experience data type
 type Experience = {
@@ -16,39 +18,15 @@ type Experience = {
   skills: string;
 };
 
-const experiences: Experience[] = [
-  {
-    id: 1,
-    companyLogo: Avatar, // Replace with actual image path
-    jobTitle: "Product Design",
-    companyName: "Product Designer at Expertsmerge",
-    startDate: "JAN 2024",
-    endDate: "PRESENT",
-    description:
-      'Endorsement',
-    skills: '581',
-  },
- 
-  {
-    id: 1,
-    companyLogo: Avatar, // Replace with actual image path
-    jobTitle: "Product Design",
-    companyName: "Product Designer at Expertsmerge",
-    startDate: "JAN 2024",
-    endDate: "PRESENT",
-    description:
-      'Endorsed',
-    skills: '581',
-  },
- 
-];
+
 
 const Archievements = () => {
+  const { user } = useSelector((state: RootState) => state.profileSlice);
   return (
     <div className="work-experience-list">
       <h2 className="text-[28px] font-bold text-[#1D2739] mb-6">Skills</h2>
       <div className="w-[60%]">
-      {experiences.map((experience) => (
+      {user.skills.map((experience:any) => (
         <div key={experience.id} className="flex items-start gap-4 mb-8 border-b pb-8">
           {/* Company logo */}
           
@@ -56,17 +34,17 @@ const Archievements = () => {
           {/* Experience details */}
           <div className="w-full">
           <h3 className="font-bold text-xl text-[#1D2739]">
-                  {experience.jobTitle}
+                  {experience}
                 </h3>
             <div className="flex justify-between">
               <div className="flex gap-4 items-center">
-              <Image
-            src={experience.companyLogo}
+              {/* <Image
+            src={experience.companyLogo || Avatar}
             alt={experience.companyName}
             width={50}
             height={50}
             className="rounded-md"
-          />
+          /> */}
                 <div>
                
                 <p className="text-[#1D2739]">{experience.companyName}</p>
