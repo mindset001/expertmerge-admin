@@ -3,9 +3,11 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { combineReducers } from 'redux';
 import searchFeedSlice from "./features/searchFeedSlice";
+import profileSlice from "./features/profileSlice"
 
 const rootReducer = combineReducers({
   searchFeedSlice,
+  profileSlice,
   // Add other reducers here
 });
 

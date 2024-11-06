@@ -3,12 +3,14 @@ import { AnimatePresence } from "framer-motion"
 import { RootState } from "@/redux/store"
 import { useSelector } from "react-redux"
 import Verification from "./components/Verification"
-import { Button, Input, Select,  Switch  } from "antd"
+import { Button, Input, Modal, Select,  Switch  } from "antd"
 import { useState } from "react"
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Approved from "./components/Approved"
 import Rejected from "./components/Rejected"
 import Suspended from "../../suspended-account/sections/components/Verification"
+import { toggleRequest } from "@/app/api/services/endpoints/signup"
+import ExpertButton from "@/components/buttons/ExpertButton"
 
 
 const SectionTwo = () => {
@@ -16,11 +18,23 @@ const SectionTwo = () => {
     const [searchTerm, setSearchTerm] = useState(''); 
     const [sortOrder, setSortOrder] = useState('Newest reported');
     const [activeSection, setActiveSection] = useState<'verification' | 'approved' | 'rejected'| 'suspended'>('verification');
-    const [isApprovalRequired, setIsApprovalRequired] = useState(true);
+    const [isApprovalRequired, setIsApprovalRequired] = useState<boolean>(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const handleToggleChange = async (checked: boolean) => {
+      const { response, error } = await toggleRequest({ approvalRequired: checked });
+  
+      if (response) {
+        setIsApprovalRequired(checked);
+        setIsModalVisible(true); 
+      } else {
+        console.log("Error toggling approval requirement:", error);
+      }
+    };
 
     // Handle the toggle change
-    const handleToggleChange = (checked: boolean) => {
-      setIsApprovalRequired(checked);
+    const closeModal = () => {
+      setIsModalVisible(false);
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +66,6 @@ const SectionTwo = () => {
           onChange={handleToggleChange}
           className="bg-[#f2f2f2]"
         />
-        
       </div>
     </div>
     <div className="border-2  rounded-[10px] p-6">
@@ -120,7 +133,25 @@ const SectionTwo = () => {
         {activeSection === 'suspended' && <Suspended />}
         
     </div>
-      
+          {/* Confirmation Modal */}
+          <Modal
+        visible={isModalVisible}
+        onCancel={closeModal}
+        footer={null}
+        width={400}
+      >
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-[#1D2739] text-[18px] font-[500]">
+            {isApprovalRequired ? 'Approval Enabled' : 'Approval Disabled'}
+          </h2>
+          <p className="text-[#645D5D] text-[14px] font-[400] mt-2">
+            {isApprovalRequired
+              ? "New users will now require approval to access ExpertsMerge."
+              : "New users can now access ExpertsMerge without approval."}
+          </p>
+          <ExpertButton text="Close" onClick={closeModal} fullWidth />
+        </div>
+      </Modal>
        
     </AnimatePresence>
   )

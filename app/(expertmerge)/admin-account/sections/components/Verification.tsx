@@ -4,6 +4,7 @@ import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icons/Icon';
 import { getAllAdmin } from '@/app/api/services/endpoints/signup';
+import CreateAccountForm from './Modal';
 
 type Group = {
   key: number;
@@ -17,6 +18,12 @@ type Group = {
   role: string;
 };
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
 export default function Verification() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
@@ -27,12 +34,48 @@ export default function Verification() {
   const [isModalVisible3, setIsModalVisible3] = useState(false);
   const [data, setData] = useState<Group[]>([]);
 
+
+
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: '',
+  });
+  const [errors, setErrors] = useState<Partial<FormData>>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    let validationErrors: Partial<FormData> = {};
+    if (!formData.firstName) validationErrors.firstName = "First Name is required";
+    if (!formData.lastName) validationErrors.lastName = "Last Name is required";
+    if (!formData.email) validationErrors.email = "Email Address is required";
+    if (!formData.role) validationErrors.role = "Role selection is required";
+    
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      // Perform form submission or API call here
+      console.log("Form submitted:", formData);
+    }
+  };
+
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       const { response, error } = await getAllAdmin();
       if (response) {
         console.log("admin list:", response.data);
-        const dataWithKeys = response.map((user: any) => ({
+        const dataWithKeys = response.data.map((user: any) => ({
           key: user.id,
           name: `${user.firstName} ${user.lastName}`,
           address: `${user.location.city}, ${user.location.country}`,
@@ -198,21 +241,7 @@ export default function Verification() {
           <div className='border-b mb-4 pb-4'>
             <h1 className='text-[#202224] text-[24px] font-[700]'>Create Admin Account</h1>
           </div>
-          <form>
-            <div className='w-full flex flex-col items-center border rounded-lg  p-6 mb-6'>
-              <div className='w-full flex justify-between'>
-                <div>
-                  <p className='text-[#101928] text-[14px] font-[500]'>First Name <span className='text-[#FF0000]'>*</span></p>
-                  <input className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]' />
-                </div>
-                <div>
-                  <p className='text-[#101928] text-[14px] font-[500]'>Last Name <span className='text-[#FF0000]'>*</span></p>
-                  <input className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]' />
-                </div>
-              </div>
-            </div>
-            <ExpertButton text='Create Account' />
-          </form>
+         <CreateAccountForm/>
         </div>
       </Modal>
     </div>

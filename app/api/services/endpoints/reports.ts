@@ -24,6 +24,19 @@ export const getReport = async () => {
     }
 }
 
+export const suspendUser = async (data: {
+    userId: string;
+    
+ }) => {
+    try {
+        const res: AxiosResponse<{payload: any}> = await APIService.put('/admin/remove-approval', data)
+   
+        return { response: res.data.payload }
+    } catch (error: any) {
+        return { error:  error.message }
+
+    }
+}
 
 
 

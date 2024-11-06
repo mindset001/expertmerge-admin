@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Select, Table, Pagination } from 'antd';
+import { Button, Input, Select, Table, Pagination, message } from 'antd';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { getReportedAccounts } from '@/app/api/services/endpoints/reports';
+import { getReportedAccounts, suspendUser } from '@/app/api/services/endpoints/reports';
 
 type Group = {
   key: number;
+  id: string;
   name: string;
+  text: string;
   address: string;
   phone: string;
   email: string;
   about: string;
   post: string;
   profileLink: string;
+  lastReported: string;
 };
 
 export default function ReportedAccounts() {
@@ -25,19 +28,23 @@ export default function ReportedAccounts() {
   useEffect(() => {
     const fetchData = async () => {
       const { response, error } = await getReportedAccounts();
+      console.log("Reported Account", response);
+      
       if (response) {
-        console.log("API Response:", response);
-        const dataWithKeys = response.map((user: any, index: number) => ({
+        const dataWithKeys = response.map((report: any, index: number) => ({
           key: index + 1,
-          name: `${user.firstName} ${user.lastName}`,
-          address: `${user.location.city}, ${user.location.country}`,
-          phone: user.phone,
-          email: user.email,
-          about: user.about || "N/A",
-          post: user.post || "N/A",
-          profileLink: user.profileLink || "N/A",
-          reason: user.reason || "N/A",
-          lastReported: user.lastReported || "N/A",
+          id: report.userReported?._id,
+          name: `${report.userReported?.firstName || ''} ${report.userReported?.lastName || ''}`,
+          address: report.userReported?.location 
+            ? `${report.userReported.location.city || ''}, ${report.userReported.location.country || ''}` 
+            : "N/A",
+          text: report.text,
+          phone: report.userReported?.phone || "N/A",
+          email: report.userReported?.email || "N/A",
+          about: report.userReported?.about || "N/A",
+          post: report.userReported?.post || "N/A",
+          profileLink: report.userReported?.profileLink || "N/A",
+          lastReported: new Date(report.updatedAt).toLocaleString() || "N/A",
         }));
         setDetails(dataWithKeys);
       } else {
@@ -46,6 +53,17 @@ export default function ReportedAccounts() {
     };
     fetchData();
   }, []);
+
+  const handleSuspendUser = async (userId: string) => {
+    const { response, error } = await suspendUser({ userId });
+    if (response) {
+      message.success("User suspended successfully.");
+      setDetails(details.filter((user) => user.id !== userId)); // Remove user from the table
+    } else {
+      message.error("Failed to suspend user. Please try again.");
+      console.error("Suspension error:", error);
+    }
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -67,13 +85,13 @@ export default function ReportedAccounts() {
   const columns = [
     { title: 'SN', dataIndex: 'key', key: 'key', width: '10%' },
     { title: 'Name', dataIndex: 'name', key: 'name', width: '20%' },
-    { title: 'Report Reason', dataIndex: 'reason', key: 'reason', width: '30%' },
+    { title: 'Report Reason', dataIndex: 'text', key: 'text', width: '30%' },
     { title: 'Last Reported', dataIndex: 'lastReported', key: 'lastReported', width: '30%' },
     {
       title: 'Action',
       dataIndex: 'action',
       render: (_: any, record: any) => (
-        <ExpertButton text="Suspend" />
+        <ExpertButton text="Suspend" onClick={() => handleSuspendUser(record.id)} />
       ),
       width: '10%',
     },
@@ -112,7 +130,7 @@ export default function ReportedAccounts() {
         </div>
       </div>
 
-      <Table dataSource={paginatedData} columns={columns} rowKey="key" pagination={false} />
+      <Table dataSource={paginatedData} columns={columns} rowKey="id" pagination={false} />
 
       <div className="flex justify-end mt-4">
         <Pagination

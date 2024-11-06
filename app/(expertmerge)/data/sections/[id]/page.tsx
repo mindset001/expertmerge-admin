@@ -9,11 +9,17 @@ import Certification from './components/Certification';
 import Skills from './components/Skills';
 import Recommendations from './components/Recommendations';
 import Archievements from './components/Archievements';
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
 
 const UserDetailsPage = () => {
   const { id } = useParams(); // Retrieve the dynamic route parameter [id]
+  const { user } = useSelector((state: RootState) => state.profileSlice);
+  const currentUserId = user?.id;
   const searchParams = useSearchParams(); // Retrieve the query parameters from the URL
 
+  console.log(user);
+  
   // Access query parameters using searchParams.get('paramName')
   const name = searchParams.get('name');
   const address = searchParams.get('address');

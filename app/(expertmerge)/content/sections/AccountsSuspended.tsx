@@ -34,7 +34,7 @@ export default function AccountsSuspended() {
         const dataWithKeys = response.data.map((user: any, index: number) => ({
           key: index + 1,
           name: `${user.firstName} ${user.lastName}`,
-          address: `${user.location.city}, ${user.location.country}`,
+          address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
           phone: user.phone,
           email: user.email,
           about: user.about || "N/A",

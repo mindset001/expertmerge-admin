@@ -4,7 +4,12 @@ import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import Icon from '@/components/icons/Icon';
 import Avatar from '@/assets/matcap.jpeg'; 
+import Frame from '@/assets/Frame.png'
 import { getUsers } from '@/app/api/services/endpoints/content';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
+import { setUserProfile } from '@/redux/features/profileSlice';
+
 
 type Profile = {
   id: any;
@@ -14,15 +19,23 @@ type Profile = {
     city: string;
     country: string;
   };
+  profAChievement: [];
+  skills: [];
+  certification: [];
+  workExperience: [];
+  education: [];
   phone: string;
   email: string;
   about: string;
   post: string;
   profileLink: string;
   imageUrl: string;
+  bannerUrl: string;
+  dob: string;
 };
 
 export default function Verification() {
+  const dispatch = useDispatch<AppDispatch>()
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10); 
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,18 +46,28 @@ export default function Verification() {
   useEffect(() => {
     const fetchData = async () => {
       const { response, error } = await getUsers();
+      console.log('normal level', response);
+      
       if (response) {
         const dataWithKeys = response.data.map((user: any, index: number) => ({
           key: index + 1,
           id: user._id,
           name: `${user.firstName} ${user.lastName}`,
-          location: user.location,
+          address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
           phone: user.phone,
           email: user.email,
           about: user.about || "N/A",
           post: user.post || "N/A",
           profileLink: user.profileLink || "N/A",
           imageUrl: user.profilePicture || Avatar,
+          bannerUrl: user.profileBanner || Frame,
+          dob: user.dob,
+          achievement: user.profAchievement || [],
+          education: user.education || [],
+          experience: user.workExperience ||[],
+          skills: user.skills ||[],
+          certification: user.certification || []
+
         }));
         setDetails(dataWithKeys);
       } else {
@@ -61,7 +84,8 @@ export default function Verification() {
   const handleSortChange = (value: string) => setSortOrder(value);
 
   const handleRowClick = (record: Profile) => {
-    router.push(`/data/sections/${record.id}?name=${record.name}&address=${record.location.city}, ${record.location.country}&phone=${record.phone}&email=${record.email}`);
+    dispatch(setUserProfile({ data: record }));
+    router.push(`/data/sections/${record.id}?name=${record.name}`);
   };
 
   const filteredData = details.filter(
@@ -84,7 +108,7 @@ export default function Verification() {
         </a>
       ),
     },
-    { title: 'Address', dataIndex: ['location', 'city'], key: 'city', width: '20%', render: (_: any, record: Profile) => `${record.location.city}, ${record.location.country}` },
+    { title: 'Address', dataIndex: 'address', key: 'address', width: '20%', },
     { title: 'Phone Number', dataIndex: 'phone', key: 'phone', width: '20%' },
     { title: 'Email Address', dataIndex: 'email', key: 'email', width: '20%' },
     {

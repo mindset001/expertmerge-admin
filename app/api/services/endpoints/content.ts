@@ -78,3 +78,13 @@ export const getSuspendedUsers= async () => {
 
     }
 }
+
+export const getUserAccount = async (user: string) => {
+    try {
+      const res: AxiosResponse<{ payload: any }> = await APIService.get(`/admin/user-account/${user}`);
+      return { response: res.data.payload };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
+  

@@ -8,9 +8,10 @@ import ExpertButton from '@/components/buttons/ExpertButton';
 import { getReport } from '@/app/api/services/endpoints/reports';
 
 interface Message {
+  name: string;
   id: number;
   user: string;
-  message: string;
+  text: string;
   time: string;
   date: string;
 }
@@ -27,14 +28,17 @@ export default function MessagesList() {
 
   useEffect(() => {
     const fetchData = async () => {
+      
+      
       const { response, error } = await getReport();
+      console.log('Reports', response.data);
       if (response) {
         const dataWithKeys = response.data.map((user: any, index: number) => ({
           key: index + 1,
-          user: `${user.firstName} ${user.lastName}`,
-          message: user.message || "No message provided",
-          time: user.time || "No time available",
-          date: user.date || "No date available",
+          name: `${user.userReported?.firstName || ''} ${user.userReported?.lastName || ''}`,
+          text: user.text || "No message provided",
+          time: user.updatedAt ? new Date(user.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "No time available",
+          date: user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "No date available",
         }));
         setDetails(dataWithKeys);
         setTotalMessages(dataWithKeys.length);
@@ -81,7 +85,7 @@ export default function MessagesList() {
       width: '2%',
     },
     {
-      dataIndex: 'user',
+      dataIndex: 'name',
       render: (text: string) => (
         <span className="flex items-center gap-2 p-2">
           <span className="rounded-full bg-[#E3EFFC] text-[#1671D9] font-bold w-[24px] h-[24px] flex justify-center items-center">
@@ -109,9 +113,10 @@ export default function MessagesList() {
       render: (_: any, record: Message) => (
         <span className="flex items-center gap-2 p-2">
           <span>
-            {record.message}
-            <strong>{record.date}</strong>
+            {record.text}
+            
           </span>
+          <strong>{record.date}</strong>
         </span>
       ),
       width: '40%',
@@ -169,7 +174,7 @@ export default function MessagesList() {
               <Image src={Avatar} alt="" className="rounded-full w-[60px] h-[60px]" />
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-[#667185] font-medium text-xl">{selectedMessage.user}</p>
+                  <p className="text-[#667185] font-medium text-xl">{selectedMessage.name}</p>
                   <Icon name="blue-check" />
                 </div>
                 <p className="text-[#98A2B3] font-normal text-sm">
@@ -184,7 +189,7 @@ export default function MessagesList() {
                 <Image src={Avatar} alt="" className="rounded-full w-[60px] h-[60px]" />
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-[#667185] font-medium text-xl">{selectedMessage.user}</p>
+                    <p className="text-[#667185] font-medium text-xl">{selectedMessage.name}</p>
                     <Icon name="blue-check" />
                   </div>
                   <p className="text-[#98A2B3] font-normal text-sm">
@@ -196,14 +201,14 @@ export default function MessagesList() {
             <Divider />
             <div className="mt-6">
               <h2 className="font-medium text-[#101928] text-lg mb-4">Reported Reason:</h2>
-              <p className="text-[#98A2B3] font-normal text-sm">{selectedMessage.message}, {selectedMessage.date}</p>
+              <p className="text-[#98A2B3] font-normal text-sm">{selectedMessage.text}, {selectedMessage.date}</p>
             </div>
             <Divider />
             <div className="flex gap-2 mt-4">
               <ExpertButton text="Suspend" onClick={closeModal} />
               <ExpertButton outlined text="Ignore" onClick={closeModal} />
               <button className="text-[#D42620] font-normal text-xs">
-                warn {selectedMessage.user}
+                warn {selectedMessage.name}
               </button>
             </div>
           </div>
