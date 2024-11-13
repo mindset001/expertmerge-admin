@@ -131,7 +131,7 @@ const Page: FC = () => {
           title="Total users"
           value={details?.users?.total_users || 0}
           icon={<i className="fas fa-user"></i>} // Use your preferred icon here
-          growth={details?.users?.user_percent_change || 0}
+          growth={details?.users?.user_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalUser')} // Set the active component
           isActive={activeComponent === 'TotalUser'} // Check if this card is active
         />
@@ -139,7 +139,7 @@ const Page: FC = () => {
           title="Total Groups"
           value={details?.users?.total_users || 0}
           icon={<i className="fas fa-users"></i>}
-          growth={details?.users?.user_percent_change || 0}
+          growth={details?.users?.user_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalGroups')}
           isActive={activeComponent === 'TotalGroups'}
         />
@@ -147,7 +147,7 @@ const Page: FC = () => {
           title="Total Forums"
           value={details?.forums?.total_forums || 0}
           icon={<i className="fas fa-comments"></i>}
-          growth={details?.forums?.forum_percent_change || 0}
+          growth={details?.forums?.forum_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalForum')}
           isActive={activeComponent === 'TotalForum'}
         />
@@ -155,7 +155,7 @@ const Page: FC = () => {
           title="Content Posted"
           value={details?.posts?.total_posts || 0}
           icon={<i className="fas fa-file-alt"></i>}
-          growth={details?.posts?.post_percent_change|| 0}
+          growth={details?.posts?.post_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('ContentPosted')}
           isActive={activeComponent === 'ContentPosted'}
         />
@@ -163,7 +163,7 @@ const Page: FC = () => {
           title="Total Accounts Deleted"
           value={details?.deletedUsers?.total_deleted_users || 0}
           icon={<i className="fas fa-check-circle"></i>}
-          growth={details?.posts?.post_percent_change|| 0}
+          growth={details?.posts?.post_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalAccounts')}
           isActive={activeComponent === 'TotalAccounts'}
         />
@@ -171,7 +171,7 @@ const Page: FC = () => {
           title="Total Accounts Suspended"
           value={details?.suspended_users?.total_suspended_users || 0}
           icon={<i className="fas fa-flag"></i>}
-          growth={details?.posts?.post_percent_change|| 0}
+          growth={details?.posts?.post_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('AccountsSuspended')}
           isActive={activeComponent === 'AccountsSuspended'}
         />

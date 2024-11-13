@@ -90,11 +90,11 @@ const DashboardStats: FC = () => {
         title="Total users"
          value={details?.users?.total_users || 0}
         icon={<i className="fas fa-user"></i>} // Use your preferred icon here
-        growth={details?.users?.user_percent_change || 0}
+        growth={details?.users?.user_percent_change?.toString() || "0"}
       />
       <StatCard
         title="Total Groups"
-        value="59,837"
+        value={details?.groups?.total_groups || 0}
         icon={<i className="fas fa-users"></i>}
         growth="15%"
       />
@@ -102,11 +102,11 @@ const DashboardStats: FC = () => {
         title="Total Forums"
         value={details?.forums?.total_forums || 0}
         icon={<i className="fas fa-comments"></i>}
-        growth={details?.forums?.forum_percent_change || 0}
+        growth={details?.forums?.forum_percent_change?.toString() || "0"}
       />
       <StatCard
         title="Total Resources"
-        value="9,837"
+        value={details?.users?.total_users || 0}
         icon={<i className="fas fa-file-alt"></i>}
         growth="15%"
       />
