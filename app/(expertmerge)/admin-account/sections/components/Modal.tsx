@@ -65,7 +65,7 @@ const CreateAccountForm = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]'
+              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px] p-2'
             />
             {errors.firstName && <p className="text-red-500">{errors.firstName}</p>}
           </div>
@@ -75,7 +75,7 @@ const CreateAccountForm = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]'
+              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px] p-2'
             />
             {errors.lastName && <p className="text-red-500">{errors.lastName}</p>}
           </div>
@@ -88,7 +88,7 @@ const CreateAccountForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]'
+              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px] p-2'
             />
             {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
@@ -98,10 +98,10 @@ const CreateAccountForm = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px]'
+              className='border border-[#D0D5DD] rounded-[6px] h-[56px] w-[340px] p-2'
             >
               <option value="">Select a role</option>
-              <option value="Support Admin">Support Admin</option>
+              <option value="admin">Support Admin</option>
               <option value="Account Manager">Account Manager</option>
               <option value="Content Manager">Content Manager</option>
               <option value="Data Manager">Data Manager</option>
