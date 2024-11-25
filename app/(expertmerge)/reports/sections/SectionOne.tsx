@@ -13,8 +13,8 @@ const SectionOne = () => {
     const { searchFeedSection } = useSelector((state: RootState) => state.searchFeedSlice)
     const dispatch = useDispatch<AppDispatch>()
     const [sideBarSections, setSiderBarSections] = useState<SearchFeedProps[]>([
-      { name: "reports", count: 120},
-      { name: "reported accounts", count: 20 },
+      { name: "reports", },
+      { name: "reported accounts", },
  
     ])
 

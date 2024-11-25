@@ -80,7 +80,7 @@ const NavBar = () => {
           <Icon name="settings" />
         </div>
         <div>
-          <Icon name="bell" />
+         <Link href='/notification'> <Icon name="bell" /></Link>
         </div>
         <div>
           <Image src={Avatar} alt="avatar" className="rounded-full h-[40px] w-[40px]" />

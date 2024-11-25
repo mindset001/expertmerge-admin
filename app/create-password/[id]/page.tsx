@@ -3,7 +3,7 @@ import { Button } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import Loop from "../../assets/loop.png"
+import Loop from "@/assets/loop.png"
 import Icon from '@/components/icons/Icon'
 import PasswordCard from '@/components/cards/PasswordCard'
 

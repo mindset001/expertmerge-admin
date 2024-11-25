@@ -2,6 +2,7 @@ import { createAdmin } from '@/app/api/services/endpoints/admin';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import React, { useState } from 'react';
 import { Modal } from 'antd'; // Import Ant Design Modal
+import 'antd/dist/reset.css';
 
 interface FormData {
   firstName: string;
@@ -46,10 +47,10 @@ const CreateAccountForm = () => {
     if (response) {
       setSuccessModalVisible(true); // Show success modal
       setFormData({ firstName: '', lastName: '', email: '', role: '' });
-      setTimeout(() => {
-        setSuccessModalVisible(false); // Hide modal after 3 seconds
-        window.location.reload(); // Reload the page
-      }, 2000);
+      // setTimeout(() => {
+      //   setSuccessModalVisible(true); // Hide modal after 3 seconds
+      //   window.location.reload(); // Reload the page
+      // }, 2000);
     } else if (error) {
       setErrorMessage(error);
     }
@@ -102,9 +103,9 @@ const CreateAccountForm = () => {
             >
               <option value="">Select a role</option>
               <option value="admin">Support Admin</option>
-              <option value="Account Manager">Account Manager</option>
-              <option value="Content Manager">Content Manager</option>
-              <option value="Data Manager">Data Manager</option>
+              <option value="account">Account Manager</option>
+              <option value="content">Content Manager</option>
+              <option value="data">Data Manager</option>
             </select>
             {errors.role && <p className="text-red-500">{errors.role}</p>}
           </div>

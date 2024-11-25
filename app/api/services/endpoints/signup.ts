@@ -60,7 +60,7 @@ export const getVerification = async () => {
 
 export const getAllAdmin = async () => {
     try {
-        const res: AxiosResponse<{payload: any}> = await APIService.get('/admin/verification-requests')
+        const res: AxiosResponse<{payload: any}> = await APIService.get('/admin/all-admins')
    
         return { response: res.data.payload }
     } catch (error: any) {

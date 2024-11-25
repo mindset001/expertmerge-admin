@@ -78,7 +78,7 @@ export default function Verification() {
         const dataWithKeys = response.data.map((user: any) => ({
           key: user.id,
           name: `${user.firstName} ${user.lastName}`,
-          address: `${user.location.city}, ${user.location.country}`,
+          // address: `${user.location.city}, ${user.location.country}`,
           phone: user.phone,
           email: user.email,
           about: user.about || "N/A",
@@ -114,53 +114,66 @@ export default function Verification() {
     .slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const columns = [
-    { title: 'SN', dataIndex: 'key', key: 'key', width: '10%' },
-    { title: 'Name', dataIndex: 'name', key: 'name', width: '20%' },
-    { title: 'Username', dataIndex: 'address', key: 'address', width: '20%' },
-    { title: 'Password', dataIndex: 'phone', key: 'phone', width: '15%' },
+    { title: 'SN', dataIndex: 'key', key: 'key', width: '5%' },
+    { title: 'Name', dataIndex: 'name', key: 'name', width: '15%' },
+    { title: 'Username', dataIndex: 'address', key: 'address', width: '10%' },
+    { title: 'Password', dataIndex: 'phone', key: 'phone', width: '10%' },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
       render: (role: string, record: any) => {
-        let colorClass = '';
-        switch (role) {
-          case 'Support Admin':
-            colorClass = 'bg-[#E0F7F3] text-[#26B99A]';
-            break;
-          case 'Account Manager':
-            colorClass = 'bg-[#FFE7D9] text-[#F97C6F]';
-            break;
-          case 'Content Manager':
-            colorClass = 'bg-[#F2E5FF] text-[#9B59B6]';
-            break;
-          case 'Data Manager':
-            colorClass = 'bg-[#E7FCD1] text-[#8BC34A]';
-            break;
-          default:
-            colorClass = 'bg-gray-200 text-gray-700';
-        }
+        // Role mappings for display names and internal keys
+        const roleMapping: { [key: string]: string } = {
+          admin: 'Admin Manager',
+          account: 'Account Manager',
+          content: 'Content Manager',
+          data: 'Data Manager',
+        };
+    
+        // Reverse mapping for dropdown values
+        const reverseRoleMapping: { [key: string]: string } = Object.fromEntries(
+          Object.entries(roleMapping).map(([key, value]) => [value, key])
+        );
+    
+        // Color classes based on roles
+        const colorClasses: { [key: string]: string } = {
+          admin: 'bg-[#E0F7F3] text-[#26B99A]',
+          account: 'bg-[#FFE7D9] text-[#F97C6F]',
+          content: 'bg-[#F2E5FF] text-[#9B59B6]',
+          data: 'bg-[#E7FCD1] text-[#8BC34A]',
+          default: 'bg-gray-200 text-gray-700',
+        };
+    
+        const currentRoleKey = reverseRoleMapping[roleMapping[role]] || role; // Map back to internal key
+        const colorClass = colorClasses[currentRoleKey] || colorClasses.default; // Determine the color
     
         return (
-         <div className='flex gap-2 items-center'>
-           <div className={`px-4 py-2 rounded-[3px] inline-flex items-center ${colorClass}`}>
-            {role}
-           </div>
-           <select
-                value={role}
-                onChange={(e) => handleRoleChange(record.key, e.target.value)}
-                className="border ml-2 rounded px-2 py-1"
-              >
-                <option value="Support Admin">Support Admin</option>
-                <option value="Account Manager">Account Manager</option>
-                <option value="Content Manager">Content Manager</option>
-                <option value="Data Manager">Data Manager</option>
-              </select>
-         </div>
+          <div className="flex gap-2 items-center">
+            {/* Badge with dynamic color */}
+            <div className={`px-4 py-2 rounded-[3px] inline-flex items-center ${colorClass}`}>
+              {roleMapping[role] || role}
+            </div>
+    
+            {/* Editable select field */}
+            <select
+              value={roleMapping[role] || role}
+              onChange={(e) => handleRoleChange(record.key, reverseRoleMapping[e.target.value])}
+              className="border rounded px-2 py-1 ml-2"
+            >
+              {/* Populate dropdown with display role names */}
+              {Object.values(roleMapping).map((mappedRole) => (
+                <option key={mappedRole} value={mappedRole}>
+                  {mappedRole}
+                </option>
+              ))}
+            </select>
+          </div>
         );
       },
-      width: '15%',
+      width: '25%',
     },
+    
     {
       title: 'Action',
       dataIndex: 'action',

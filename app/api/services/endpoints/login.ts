@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import { APIService } from "../ApiServices";
 
@@ -14,6 +14,17 @@ export const superLogin = async (data: {
         return { error: error.response.data.error || error.message }
     }
 }
+
+
+export const createPassword = async (data: { password: string }, config?: object) => {
+    try {
+        const response = await APIService.post("/admin/new-admin", data, config);
+        return { response: response.data };
+    } catch (error:any) {
+        return { error: error.response?.data?.message || "An error occurred" };
+    }
+};
+
 
 export const adminLogin = async (data: { email: string; password: string }) => {
     try {

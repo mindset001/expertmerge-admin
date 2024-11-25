@@ -88,3 +88,12 @@ export const getUserAccount = async (user: string) => {
     }
   };
   
+
+  export const getAllNotification = async () => {
+    try {
+      const res: AxiosResponse<{ payload: any }> = await APIService.get('/admin/admin-not');
+      return { response: res.data.payload };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
