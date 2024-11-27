@@ -97,3 +97,12 @@ export const getUserAccount = async (user: string) => {
       return { error: error.message };
     }
   };
+
+  export const getAdminDetails = async (admin: string) => {
+    try {
+      const res: AxiosResponse<{ payload: any }> = await APIService.get(`/admin/single-admin/${admin}`);
+      return { response: res.data.payload };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
