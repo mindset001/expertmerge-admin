@@ -205,7 +205,11 @@ export default function Verification() {
       {/* Header */}
       <div className='flex justify-between'>
         <h1 className='text-[#1D2739] text-[24px] font-[500] pl-6 mb-8'>Admin Management</h1>
-        <h1 className='text-[#1D2739] text-[24px] font-[500] pl-6 mb-8 cursor-pointer' onClick={() => setIsModalVisible3(true)}>Create Admin Account</h1>
+        {/* <h1 className='text-[#1D2739] text-[24px] font-[500] pl-6 mb-8 cursor-pointer' onClick={() => setIsModalVisible3(true)}>Create Admin Account</h1> */}
+        <ExpertButton
+        text='Create Admin Account'
+        onClick={() => setIsModalVisible3(true)}
+        />
       </div>
 
       <div className='border-2 rounded-lg p-6'>

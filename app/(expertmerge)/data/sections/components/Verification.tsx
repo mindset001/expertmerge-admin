@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Select, Table, Pagination } from 'antd';
+import { Button, Input, Select, Table, Pagination, message } from 'antd';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import Icon from '@/components/icons/Icon';
@@ -9,12 +9,14 @@ import { getUsers } from '@/app/api/services/endpoints/content';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { setUserProfile } from '@/redux/features/profileSlice';
+import Link from 'next/link';
 
 
 type Profile = {
   id: any;
   key: number;
   name: string;
+  link:string;
   location: {
     city: string;
     country: string;
@@ -56,6 +58,7 @@ export default function Verification() {
           address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
           phone: user.phone,
           email: user.email,
+          link: `https://experts-frontend-omega.vercel.app/profile/${user._id}`,
           about: user.about || "N/A",
           post: user.post || "N/A",
           profileLink: user.profileLink || "N/A",
@@ -96,7 +99,7 @@ export default function Verification() {
 
   const columns = [
     { title: 'SN', dataIndex: 'key', key: 'key', width: '10%' },
-    { title: 'id', dataIndex: 'id', key: 'id', width: '10%' },
+    // { title: 'id', dataIndex: 'id', key: 'id', width: '10%' },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -113,15 +116,32 @@ export default function Verification() {
     { title: 'Email Address', dataIndex: 'email', key: 'email', width: '20%' },
     {
       title: 'Profile Link',
-      dataIndex: 'email',
+      dataIndex: 'link',
       render: (_: any, record: Profile) => (
         <div className="flex items-center cursor-pointer">
-          <p>{record.email}</p>
-          <Icon name='copy' />
+          <Link href={record.link}>
+            <p className="truncate w-[150px] text-blue-500 hover:underline" title={record.link}>
+              {record.link}
+            </p>
+          </Link>
+          <div   onClick={() => {
+              navigator.clipboard.writeText(record.link).then(() => {
+                message.success('Link copied to clipboard!');
+              }).catch((err) => {
+                console.error('Failed to copy link: ', err);
+              });
+            }}>
+          <Icon
+            name="copy"
+          
+          />
+          </div>
+          
         </div>
       ),
       width: '10%',
     },
+    
   ];
 
   return (
