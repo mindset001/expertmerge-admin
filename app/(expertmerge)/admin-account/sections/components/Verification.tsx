@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Table, Pagination, Modal } from 'antd';
+import { Button, Input, Table, Pagination, Modal, message } from 'antd';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icons/Icon';
 import { getAllAdmin } from '@/app/api/services/endpoints/signup';
 import CreateAccountForm from './Modal';
-import { editAdmin } from '@/app/api/services/endpoints/content';
+import { deleteAdmin, editAdmin } from '@/app/api/services/endpoints/content';
 import { userAgent } from 'next/server';
 
 type Group = {
@@ -79,7 +79,7 @@ export default function Verification() {
       if (response) {
         console.log("admin list:", response.data);
         const dataWithKeys = response.data.map((user: any) => ({
-          key: user._id.toString(), // Ensure it's a string
+          key: user.id.toString(), // Ensure it's a string
   _id: user._id.toString(), // Ensure it's a string
   name: `${user.firstName} ${user.lastName}`,
   phone: user.phone,
@@ -97,12 +97,12 @@ export default function Verification() {
     fetchData();
   }, []);
   // Handle role change
-  const handleRoleChange = (id: string, newRole: string) => {
+  const handleRoleChange = (id: any, newRole: string) => {
     const updatedData = data.map((item) =>
       item._id === id ? { ...item, role: newRole } : item
     );
     setData(updatedData);
-    setSelectedRoleData({ id: id.toString(), role: newRole }); // Ensure id is a string
+    setSelectedRoleData({ id, role: newRole }); 
   };
 
   const handleSave = async () => {
@@ -112,6 +112,7 @@ export default function Verification() {
         const { response, error } = await editAdmin({ id: id.toString(), text: role }); // Ensure id is a string
         if (response) {
           console.log('Role updated successfully:', response);
+          message.success('Role updated successfully')
         } else {
           console.error('Error updating role:', error);
         }
@@ -125,6 +126,44 @@ export default function Verification() {
     setCurrentPage(page);
   };
 
+  const handleDeleteAdmin = async (id: string) => {
+    try {
+      const { response, error } = await deleteAdmin(id);
+      if (response) {
+        // Update the UI by removing the deleted admin
+        setData((prevData) => prevData.filter((admin) => admin._id !== id));
+        message.success('Admin deleted successfully');
+        setIsModalVisible(false); // Close the modal
+      } else {
+        console.error('Error deleting admin:', error);
+        message.error('Failed to delete admin');
+      }
+    } catch (error) {
+      console.error('Error during delete:', error);
+      message.error('An unexpected error occurred');
+    }
+  };
+
+  const [adminToDelete, setAdminToDelete] = useState<string | null>(null);
+
+const confirmDeleteAdmin = (id: string) => {
+  setAdminToDelete(id);
+  setIsModalVisible(true); // Open confirmation modal
+};
+
+const handleDeleteConfirm = async () => {
+  if (adminToDelete) {
+    await handleDeleteAdmin(adminToDelete);
+    setAdminToDelete(null); // Clear the state after deletion
+  }
+};
+
+const handleDeleteCancel = () => {
+  setAdminToDelete(null);
+  setIsModalVisible(false); // Close the modal
+};
+
+  
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -211,7 +250,7 @@ export default function Verification() {
       render: (_: any, record: any) => (
         <div className="flex gap-2">
          
-          <button onClick={() => setIsModalVisible(true)}>
+          <button  onClick={() => confirmDeleteAdmin(record._id)}>
             <p>Delete</p>
           </button>
         </div>
@@ -263,15 +302,21 @@ export default function Verification() {
       </div>
 
       {/* Modals */}
-      <Modal visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} width={500}>
-        <div className='flex flex-col justify-center items-center'>
-          <Icon name='verified' />
-          <div className='flex flex-col items-center text-center'>
-            <h1 className='text-[#1D2739] text-[20px] font-[500]'>Account verified!</h1>
-            <p className='text-[#645D5D] text-[14px] font-[400]'>You have successfully verified Minerva Barnett's account</p>
-          </div>
-        </div>
-      </Modal>
+      <Modal
+  visible={isModalVisible}
+  onOk={handleDeleteConfirm}
+  onCancel={handleDeleteCancel}
+  okText="Yes, Delete"
+  cancelText="Cancel"
+>
+  <div className="text-center">
+    <h2 className="text-lg font-semibold mt-2">Are you sure?</h2>
+    <p className="text-sm text-gray-600">
+      Do you really want to delete this admin account? This action cannot be undone.
+    </p>
+  </div>
+</Modal>
+
 
       <Modal visible={isModalVisible3} onCancel={() => setIsModalVisible3(false)} footer={null} width={800}>
         <div className='flex flex-col justify-center'>

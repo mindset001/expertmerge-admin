@@ -114,3 +114,13 @@ export const getUserAccount = async (user: string) => {
 
     }
 }
+
+
+export const deleteAdmin= async (admin: string) => {
+    try {
+      const res: AxiosResponse<{ payload: any }> = await APIService.delete(`/admin/delete-admin/${admin}`);
+      return { response: res.data.payload };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
