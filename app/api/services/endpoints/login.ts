@@ -31,16 +31,20 @@ export const adminLogin = async (data: { email: string; password: string }) => {
         // Sending POST request for login
         const res: AxiosResponse = await APIService.post('/admin/login', data);
         console.log(data);
-        
-        // Storing the token in localStorage
-        if (res.data?.payload?.auth_token) {
-            localStorage.setItem("token", JSON.stringify(res.data.payload.auth_token));
+
+        const payload = res.data.payload;
+
+        if (payload?.auth_token && payload?.admin) {
+            // Store token in localStorage
+            localStorage.setItem("token", JSON.stringify(payload.auth_token));
+
+            // Store additional admin details in localStorage
+            localStorage.setItem("adminDetails", JSON.stringify(payload.admin));
         }
-        
-        // Returning the user information
-        console.log(res.data.payload, 'myself');
-        
-        return { response: res.data.payload };
+
+        // Returning the payload for immediate use
+        console.log(payload, 'myself');
+        return { response: payload };
     } catch (error: any) {
         // Returning error message if there's an error in the request
         return { error: error.response?.data?.error || error.message };

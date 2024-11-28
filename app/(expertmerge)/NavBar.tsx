@@ -9,61 +9,101 @@ import Avatar from "@/assets/matcap.jpeg";
 import { Select } from "antd";
 import Link from "next/link";
 import Image from "next/image";
-import { getAdminDetails } from "../api/services/endpoints/content";
+
 
 const NavBar = () => {
-  const [adminDetails, setAdminDetails] = useState<any>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchAdminDetails = async () => {
-      try {
-        const adminId = "exampleAdminId"; // Replace with the actual admin ID logic
-        const { response, error } = await getAdminDetails(adminId);
-        if (response) {
-          setAdminDetails(response);
-        } else if (error) {
-          setError(error);
-        }
-      } catch (err) {
-        setError("An unexpected error occurred while fetching admin details.");
-      }
-    };
-
-    fetchAdminDetails();
-  }, []);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleSignOut = () => {
-    console.log("Sign out clicked");
-    // Add sign-out logic here
-  };
+    // Clear all content in localStorage
+    localStorage.clear();
+  
+    // Redirect to home page
+    window.location.href = "/";
+  };;
 
   const handleChangePassword = () => {
     console.log("Change password clicked");
     // Add change password logic here
   };
 
-  const menuBtn: NavBarMenuListProps[] = [
-    { route: "dashboard", text: "Dashboard" },
-    { route: "reports", text: "Reports" },
-    { route: "content", text: "Content" },
-    { route: "data", text: "Data" },
-    {
-      text: "Accounts",
-      options: [
-        { value: "admin", label: "Admin Accounts", route: "admin-account" },
-        { value: "user", label: "User Accounts", route: "user-account" },
-      ],
-    },
-    { text: "Verification", route: "verification" },
-    { text: "Sign up Request", route: "signup" },
-    { text: "Notification", route: "notification" },
-  ];
+  const adminDetails = JSON.parse(localStorage.getItem("adminDetails") || '{}');
+  console.log(adminDetails);
+
+  const menuBtn: NavBarMenuListProps[] = 
+  adminDetails?.role === "super"
+    ? [
+        { route: "dashboard", text: "Dashboard" },
+        { route: "reports", text: "Reports" },
+        { route: "content", text: "Content" },
+        { route: "data", text: "Data" },
+        {
+          text: "Accounts",
+          options: [
+            { value: "admin", label: "Admin Accounts", route: "admin-account" },
+            { value: "user", label: "User Accounts", route: "user-account" },
+          ],
+        },
+        { text: "Verification", route: "verification" },
+        { text: "Sign up Request", route: "signup" },
+        { text: "Notification", route: "notification" },
+      ]
+    : adminDetails?.role === "data"
+    ? [
+        { route: "dashboard", text: "Dashboard" },
+        { route: "data", text: "Data" },
+        { route: "content", text: "Content" },
+      ]
+    : adminDetails?.role === "content"
+    ? [
+        { route: "dashboard", text: "Dashboard" },
+        { route: "reports", text: "Reports" },
+        { route: "content", text: "Content" },
+        { text: "Notification", route: "notification" },
+      ]
+    : adminDetails?.role === "account"
+    ?  [
+      { route: "dashboard", text: "Dashboard" },
+      { route: "reports", text: "Reports" },
+      { route: "content", text: "Content" },
+      { route: "data", text: "Data" },
+      {
+        text: "Accounts",
+        options: [
+        
+          { value: "user", label: "User Accounts", route: "user-account" },
+        ],
+      },
+      { text: "Verification", route: "verification" },
+      { text: "Sign up Request", route: "signup" },
+      { text: "Notification", route: "notification" },
+    ]
+    : adminDetails?.role === "admin"
+    ?  [
+      { route: "dashboard", text: "Dashboard" },
+      { route: "reports", text: "Reports" },
+      { route: "content", text: "Content" },
+      { route: "data", text: "Data" },
+      {
+        text: "Accounts",
+        options: [
+          // { value: "admin", label: "Admin Accounts", route: "admin-account" },
+          { value: "user", label: "User Accounts", route: "user-account" },
+        ],
+      },
+      { text: "Verification", route: "verification" },
+      { text: "Sign up Request", route: "signup" },
+      { text: "Notification", route: "notification" },
+    ]
+    : [];
+
 
   return (
     <div className="h-[88.96px] gap-8 bg-white border-b border-b-[#0A424A] flex items-center justify-between px-[50px]">
@@ -124,11 +164,15 @@ const NavBar = () => {
             onClick={toggleDropdown}
             className="cursor-pointer flex items-center space-x-2"
           >
+            <div className="bg-[#036B26] border rounded-full text-white flex items-center justify-center h-10 w-10">
+              {`${adminDetails.firstName?.charAt(0).toUpperCase() || ''}${adminDetails.lastName?.charAt(0).toUpperCase() || ''}`}
+            </div>
+{/* 
             <Image
               src={Avatar}
               alt="avatar"
               className="rounded-full h-[40px] w-[40px]"
-            />
+            /> */}
           </div>
 
           {/* Dropdown Menu */}

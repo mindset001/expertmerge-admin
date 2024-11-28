@@ -98,11 +98,19 @@ export const getUserAccount = async (user: string) => {
     }
   };
 
-  export const getAdminDetails = async (admin: string) => {
+
+
+  export const editAdmin = async (data: {
+    id: string;
+    text: string;
+    
+ }) => {
     try {
-      const res: AxiosResponse<{ payload: any }> = await APIService.get(`/admin/single-admin/${admin}`);
-      return { response: res.data.payload };
+        const res: AxiosResponse<{payload: any}> = await APIService.put('/admin/edit-admin', data)
+   
+        return { response: res.data.payload }
     } catch (error: any) {
-      return { error: error.message };
+        return { error:  error.message }
+
     }
-  };
+}

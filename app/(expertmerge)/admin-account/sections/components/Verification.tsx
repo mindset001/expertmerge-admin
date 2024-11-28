@@ -5,9 +5,12 @@ import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icons/Icon';
 import { getAllAdmin } from '@/app/api/services/endpoints/signup';
 import CreateAccountForm from './Modal';
+import { editAdmin } from '@/app/api/services/endpoints/content';
+import { userAgent } from 'next/server';
 
 type Group = {
   key: number;
+  _id: string;
   name: string;
   address: string;
   phone: string;
@@ -33,7 +36,7 @@ export default function Verification() {
   const [isModalVisible2, setIsModalVisible2] = useState(false);
   const [isModalVisible3, setIsModalVisible3] = useState(false);
   const [data, setData] = useState<Group[]>([]);
-
+  const [selectedRoleData, setSelectedRoleData] = useState<{ id: number; role: string } | null>(null);
 
 
   const [formData, setFormData] = useState<FormData>({
@@ -76,15 +79,15 @@ export default function Verification() {
       if (response) {
         console.log("admin list:", response.data);
         const dataWithKeys = response.data.map((user: any) => ({
-          key: user.id,
-          name: `${user.firstName} ${user.lastName}`,
-          // address: `${user.location.city}, ${user.location.country}`,
-          phone: user.phone,
-          email: user.email,
-          about: user.about || "N/A",
-          post: user.post || "N/A",
-          profileLink: user.profileLink || "N/A",
-          role: user.role || "Support Admin"
+          key: user._id.toString(), // Ensure it's a string
+  _id: user._id.toString(), // Ensure it's a string
+  name: `${user.firstName} ${user.lastName}`,
+  phone: user.phone,
+  email: user.email,
+  about: user.about || 'N/A',
+  post: user.post || 'N/A',
+  profileLink: user.profileLink || 'N/A',
+  role: user.role || 'Support Admin',
         }));
         setData(dataWithKeys);
       } else {
@@ -93,12 +96,29 @@ export default function Verification() {
     };
     fetchData();
   }, []);
-
-  const handleRoleChange = (id: number, newRole: string) => {
-    const updatedData = data.map(item => 
-      item.key === id ? { ...item, role: newRole } : item
+  // Handle role change
+  const handleRoleChange = (id: string, newRole: string) => {
+    const updatedData = data.map((item) =>
+      item._id === id ? { ...item, role: newRole } : item
     );
     setData(updatedData);
+    setSelectedRoleData({ id: id.toString(), role: newRole }); // Ensure id is a string
+  };
+
+  const handleSave = async () => {
+    if (selectedRoleData) {
+      const { id, role } = selectedRoleData;
+      try {
+        const { response, error } = await editAdmin({ id: id.toString(), text: role }); // Ensure id is a string
+        if (response) {
+          console.log('Role updated successfully:', response);
+        } else {
+          console.error('Error updating role:', error);
+        }
+      } catch (error) {
+        console.error('Error during save:', error);
+      }
+    }
   };
 
   const handlePageChange = (page: number) => {
@@ -116,8 +136,8 @@ export default function Verification() {
   const columns = [
     { title: 'SN', dataIndex: 'key', key: 'key', width: '5%' },
     { title: 'Name', dataIndex: 'name', key: 'name', width: '15%' },
-    { title: 'Username', dataIndex: 'address', key: 'address', width: '10%' },
-    { title: 'Password', dataIndex: 'phone', key: 'phone', width: '10%' },
+    { title: 'Email', dataIndex: 'email', key: 'email', width: '10%' },
+    // { title: 'Password', dataIndex: 'phone', key: 'phone', width: '10%' }, 
     {
       title: 'Role',
       dataIndex: 'role',
@@ -179,7 +199,7 @@ export default function Verification() {
       dataIndex: 'action',
       render: (_: any, record: any) => (
         <div className="flex gap-2">
-          <ExpertButton text="Save" onClick={() => setIsModalVisible(true)} />
+          <ExpertButton text="Save" onClick={handleSave} />
         
         </div>
       ),
