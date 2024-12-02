@@ -49,6 +49,16 @@ const DashboardStats: FC = () => {
       forum_percent_change: any;
       // add other fields if necessary
     };
+    resources: {
+      total_resources: number;
+      resources_percent_change: any;
+      // add other fields if necessary
+    };
+    verified_users: {
+      total_verified_users: number;
+      total_verified_users_percent_change: any;
+      // add other fields if necessary
+    };
     deletedUsers: {
       total_deleted_users: number;
       deleted_users_percent_change: any;
@@ -96,7 +106,7 @@ const DashboardStats: FC = () => {
         title="Total Groups"
         value={details?.groups?.total_groups || 0}
         icon={<i className="fas fa-users"></i>}
-        growth="15%"
+        growth={details?.groups?.total_groups?.toString() || "0"}
       />
       <StatCard
         title="Total Forums"
@@ -106,21 +116,21 @@ const DashboardStats: FC = () => {
       />
       <StatCard
         title="Total Resources"
-        value={details?.users?.total_users || 0}
+        value={details?.resources?.total_resources || 0}
         icon={<i className="fas fa-file-alt"></i>}
-        growth="15%"
+        growth={details?.resources?.resources_percent_change?.toString() || "0"}
       />
       <StatCard
         title="Total accounts verified"
-        value="59,837"
+        value={details?.verified_users?.total_verified_users || 0}
         icon={<i className="fas fa-check-circle"></i>}
-        growth="15%"
+        growth={details?.verified_users?.total_verified_users_percent_change?.toString() || "0"}
       />
       <StatCard
         title="Total accounts suspended"
         value={details?.suspended_users?.total_suspended_users || 0}
         icon={<i className="fas fa-flag"></i>}
-        growth="15%"
+        growth={details?.resources?.resources_percent_change?.toString() || "0"}
       />
     </div>
   );

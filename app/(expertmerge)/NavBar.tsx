@@ -5,8 +5,9 @@ import MenuBtn from "@/components/buttons/MenuBtn";
 import Icon from "@/components/icons/Icon";
 import { NavBarMenuListProps } from "@/types";
 import { SearchOutlined } from "@ant-design/icons";
-import { Select } from "antd";
+import { Modal, Select } from "antd";
 import Link from "next/link";
+import EditPassword from "./Modal";
 
 type AdminDetails = {
   firstName?: string;
@@ -17,6 +18,7 @@ type AdminDetails = {
 const NavBar = () => {
   const [adminDetails, setAdminDetails] = useState<AdminDetails | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalVisible3, setIsModalVisible3] = useState(false);
 
   // Fetch admin details from localStorage
   useEffect(() => {
@@ -128,7 +130,7 @@ const NavBar = () => {
                 <MenuBtn {...item} />
                 <Select
                   bordered={false}
-                  className="ml-[-20px] mt-1"
+                  className="ml-[-20px] mt-1 w-[200px]"
                   onChange={(value) => {
                     const selectedOption = item.options?.find((option) => option.value === value);
                     if (selectedOption?.route) {
@@ -137,7 +139,7 @@ const NavBar = () => {
                   }}
                 >
                   {item.options?.map((option, subIndex) => (
-                    <Select.Option key={subIndex} value={option.value}>
+                    <Select.Option key={subIndex} value={option.value} >
                       {option.label}
                     </Select.Option>
                   ))}
@@ -152,8 +154,8 @@ const NavBar = () => {
 
       {/* Right Section */}
       <div className="flex justify-evenly gap-4 items-center">
-        <SearchOutlined />
-        <Icon name="settings" />
+        {/* <SearchOutlined /> */}
+        {/* <Icon name="settings" /> */}
         <Link href="/notification">
           <Icon name="bell" />
         </Link>
@@ -169,9 +171,14 @@ const NavBar = () => {
           {isOpen && (
             <div className="absolute right-0 mt-2 w-[150px] bg-white shadow-lg rounded-md z-10">
               <ul className="py-2 text-sm text-gray-700">
-                <li onClick={handleChangePassword} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700">
+              {`${adminDetails?.firstName || ""} ${adminDetails?.lastName || ""}`}
+            </div>
+              <li onClick={() => setIsModalVisible3(true)}className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700">
                   Change Password
                 </li>
+           
+                
                 <li onClick={handleSignOut} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Sign Out
                 </li>
@@ -180,6 +187,9 @@ const NavBar = () => {
           )}
         </div>
       </div>
+      <Modal visible={isModalVisible3} onCancel={() => setIsModalVisible3(false)} footer={null} width={800}>
+                <EditPassword/>
+              </Modal>
     </div>
   );
 };

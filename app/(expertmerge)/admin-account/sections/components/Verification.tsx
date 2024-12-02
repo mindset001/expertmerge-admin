@@ -184,7 +184,7 @@ const handleDeleteCancel = () => {
       render: (role: string, record: any) => {
         // Role mappings for display names and internal keys
         const roleMapping: { [key: string]: string } = {
-          admin: 'Admin Manager',
+          admin: 'Support Admin',
           account: 'Account Manager',
           content: 'Content Manager',
           data: 'Data Manager',

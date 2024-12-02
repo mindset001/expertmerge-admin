@@ -16,3 +16,14 @@ export const createAdmin = async (data: {
     }
 }
 
+export const editPassword = async (data: {
+    // email: string;
+    password: string;
+}) => {
+    try {
+        const res = await APIService.post('/admin/change-password', data) 
+        return { response: res.data.payload.user }
+    } catch (error: any) {
+        return { error: error.response.data.error || error.message }
+    }
+}

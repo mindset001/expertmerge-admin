@@ -18,12 +18,13 @@ export const superLogin = async (data: {
 
 export const createPassword = async (data: { password: string }, config?: object) => {
     try {
-        const response = await APIService.post("/admin/new-admin", data, config);
+        const response = await APIService.post("/admin/set-password", data, config);
         return { response: response.data };
     } catch (error:any) {
         return { error: error.response?.data?.message || "An error occurred" };
     }
 };
+
 
 
 export const adminLogin = async (data: { email: string; password: string }) => {
