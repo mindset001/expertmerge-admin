@@ -3,10 +3,10 @@ import Avatar from '@/assets/matcap.jpeg';
 import Frame from '@/assets/Frame.png';
 import Image from 'next/image';
 import ExpertButton from '@/components/buttons/ExpertButton';
-import { Switch, Typography, Modal, Button } from "antd";
+import { Switch, Typography, Modal, Button, message } from "antd";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { toggleView } from '@/app/api/services/endpoints/signup';
+import { blockUser, toggleView } from '@/app/api/services/endpoints/signup';
 
 const { Text } = Typography;
 
@@ -23,13 +23,13 @@ function General() {
   const handleToggleChange = async (checked: boolean) => {
     setChecked(checked);
     console.log('Toggle switch is:', checked ? 'On' : 'Off');
-    
+
     // Call toggleView with the updated user settings
     const result = await toggleView({
       id: user.id,
       allowedToViewAll: checked,
     });
-  
+
     if (result.response) {
       console.log("View status updated successfully");
       setIsModalVisible(true); // Show success modal
@@ -41,6 +41,17 @@ function General() {
   // Function to handle closing the modal
   const handleModalClose = () => {
     setIsModalVisible(false);
+  };
+
+  const handleBlockUser = async () => {
+    const result = await blockUser({ userId: user.id });
+    if (result.response) {
+      console.log("User blocked successfully.");
+      message.success("User has been blocked.");
+    } else {
+      console.error("Failed to block user:", result.error);
+      message.error("Failed to block the user. Please try again.", result.error);
+    }
   };
 
   return (
@@ -105,18 +116,21 @@ function General() {
         <div>
           <h3 className='text-[14px] font-[500] text-[#101928]'>Headline</h3>
           <p className='text-[18px] font-[400] text-[#98A2B3]'>
-            Creative Brand/Product Designer | Transforming Vision into Reality | Empowering Startups and VC Funds with Scalable Design Solutions | Leveraging Innovation to Shape Memorable Experiences.
+          {user.headline}
           </p>
         </div>
         <div>
           <h3 className='text-[14px] font-[500] text-[#101928]'>About</h3>
           <p className='text-[18px] font-[400] text-[#98A2B3]'>
-            I am an experienced brand and product designer with a passion for empowering startups and VC funds...
+          {user.about}
           </p>
         </div>
 
         <div>
-          <ExpertButton text='Block Clifford' />
+          <ExpertButton
+            text={`Block ${user?.name || "User"}`}
+            onClick={handleBlockUser}
+          />
         </div>
       </div>
     </div>

@@ -111,7 +111,6 @@ export const approve = async (data: {
 }
 
 
-
 export const toggleRequest= async (data: {
 
  }) => {
@@ -148,6 +147,19 @@ export const verifyUser = async (data: { userId: string }) => {
     }
   };
   
+  export const blockUser = async (data: {
+    userId: string;
+    
+  }) => {
+    try {
+        const res: AxiosResponse<{payload: any}> = await APIService.put('/admin/remove-approval', data)
+   
+        return { response: res.data }
+    } catch (error: any) {
+        return { error:  error }
+  
+    }
+  }
 
   export const toggleNotPref = async (preferenceKey: string, preferenceValue: boolean) => {
     try {

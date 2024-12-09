@@ -130,7 +130,8 @@ const NavBar = () => {
                 <MenuBtn {...item} />
                 <Select
                   bordered={false}
-                  className="ml-[-20px] mt-1 w-[200px]"
+                  className="ml-[-20px] mt-1"
+                  dropdownStyle={{ width: '200px' }} 
                   onChange={(value) => {
                     const selectedOption = item.options?.find((option) => option.value === value);
                     if (selectedOption?.route) {

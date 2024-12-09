@@ -29,6 +29,7 @@ type Profile = {
   phone: string;
   email: string;
   about: string;
+  headline: string;
   post: string;
   profileLink: string;
   imageUrl: string;
@@ -55,6 +56,7 @@ export default function Verification() {
           key: index + 1,
           id: user._id,
           name: `${user.firstName} ${user.lastName}`,
+          headline: user.headline || "N/A",
           address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
           phone: user.phone,
           email: user.email,
