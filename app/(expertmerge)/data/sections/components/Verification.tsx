@@ -169,9 +169,9 @@ export default function Verification() {
               onChange={handleSortChange}
               className="w-[200px] rounded-md"
             >
-              <Select.Option value="Newest reported">Newest reported</Select.Option>
-              <Select.Option value="Oldest reported">Oldest reported</Select.Option>
-              <Select.Option value="Most reported">Most reported</Select.Option>
+              <Select.Option value="Newest reported">Newest account</Select.Option>
+              <Select.Option value="Oldest reported">Oldest account</Select.Option>
+              <Select.Option value="Most reported">Most account</Select.Option>
             </Select>
 
             <Input
