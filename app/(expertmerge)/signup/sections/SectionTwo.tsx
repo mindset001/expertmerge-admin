@@ -4,13 +4,14 @@ import { RootState } from "@/redux/store"
 import { useSelector } from "react-redux"
 import Verification from "./components/Verification"
 import { Button, Input, Modal, Select,  Switch  } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Approved from "./components/Approved"
 import Rejected from "./components/Rejected"
 import Suspended from "../../suspended-account/sections/components/Verification"
 import { toggleRequest } from "@/app/api/services/endpoints/signup"
 import ExpertButton from "@/components/buttons/ExpertButton"
+import { getAdminDetails } from "@/app/api/services/endpoints/login"
 
 
 const SectionTwo = () => {
@@ -20,17 +21,52 @@ const SectionTwo = () => {
     const [activeSection, setActiveSection] = useState<'verification' | 'approved' | 'rejected'| 'suspended'>('verification');
     const [isApprovalRequired, setIsApprovalRequired] = useState<boolean>(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [adminDetails, setAdminDetails] = useState<any>(null); // State for admin details
+
+    useEffect(() => {
+      // Fetch admin details from localStorage
+      const storedDetails = localStorage.getItem("adminDetails");
+      if (storedDetails) {
+        const parsedDetails = JSON.parse(storedDetails);
+        setAdminDetails(parsedDetails);
+  
+        // Set the initial state of isApprovalRequired based on signupApproval
+        if (parsedDetails.signupApproval !== undefined) {
+          setIsApprovalRequired(parsedDetails.signupApproval);
+        }
+      } else {
+        console.log("Admin details not found in localStorage.");
+      }
+    }, []);
+    
+    // Optional: Log state when it updates
+    useEffect(() => {
+      console.log(adminDetails, 'Updated admin details in state');
+    }, [adminDetails]);
+    
 
     const handleToggleChange = async (checked: boolean) => {
       const { response, error } = await toggleRequest({ approvalRequired: checked });
-  
+    
       if (response) {
+        // Update the state
         setIsApprovalRequired(checked);
-        setIsModalVisible(true); 
+        setIsModalVisible(true);
+    
+        // Fetch updated admin details
+        const updatedDetailsResponse = await getAdminDetails(); // Replace with your API call to fetch admin details
+        if (updatedDetailsResponse?.response) {
+          // Update localStorage with new admin details
+          localStorage.setItem("adminDetails", JSON.stringify(updatedDetailsResponse.response));
+          console.log("Updated admin details saved to localStorage:", updatedDetailsResponse.response);
+        } else {
+          console.log("Failed to fetch updated admin details.");
+        }
       } else {
         console.log("Error toggling approval requirement:", error);
       }
     };
+    
 
     // Handle the toggle change
     const closeModal = () => {

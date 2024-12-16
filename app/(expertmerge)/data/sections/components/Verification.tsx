@@ -17,6 +17,7 @@ type Profile = {
   key: number;
   name: string;
   link:string;
+  professional: boolean;
   location: {
     city: string;
     country: string;
@@ -55,6 +56,7 @@ export default function Verification() {
         const dataWithKeys = response.data.map((user: any, index: number) => ({
           key: index + 1,
           id: user._id,
+          professional: user.professional,
           name: `${user.firstName} ${user.lastName}`,
           headline: user.headline || "N/A",
           address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",

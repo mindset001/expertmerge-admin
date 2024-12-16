@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '@/assets/matcap.jpeg';
 import Frame from '@/assets/Frame.png';
 import Image from 'next/image';
@@ -14,6 +14,11 @@ function General() {
   const [checked, setChecked] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal state
   const { user } = useSelector((state: RootState) => state.profileSlice);
+
+  useEffect(() => {
+    // Update checked state if the user object changes
+    setChecked(user?.professional || false);
+  }, [user]);
 
   function formatDOB(dob: string): string {
     const date = new Date(dob);
@@ -35,8 +40,10 @@ function General() {
       setIsModalVisible(true); // Show success modal
     } else {
       console.error("Failed to update view status:", result.error);
+      setChecked(!checked); // Revert toggle if API call fails
     }
   };
+
 
   // Function to handle closing the modal
   const handleModalClose = () => {
@@ -69,8 +76,8 @@ function General() {
           </h2>
           <p className="text-[#645D5D] text-[14px] font-[400] mt-2">
             {checked
-              ? "New users will now require approval to access ExpertsMerge."
-              : "New users can now access ExpertsMerge without approval."}
+              ? "User can now view all professionals"
+              : "User restricted from viewing professionals"}
           </p>
           <ExpertButton text="Close" onClick={handleModalClose} fullWidth />
         </div>
@@ -88,7 +95,7 @@ function General() {
         <div className="w-[80%] flex items-center justify-between border rounded-[100px] border-[#0A424A] p-2">
           <Text className="mr-2">Allow to view all members</Text>
           <div className='flex items-center gap-2'>
-            <p>On</p>
+            <p>{checked ? "On" : "Off"}</p>
             <Switch
               checked={checked}
               onChange={handleToggleChange}
