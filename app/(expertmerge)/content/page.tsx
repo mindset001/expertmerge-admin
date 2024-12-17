@@ -137,9 +137,9 @@ const Page: FC = () => {
         />
         <StatCard
           title="Total Groups"
-          value={details?.users?.total_users || 0}
+          value={details?.groups?.total_groups || 0}
           icon={<i className="fas fa-users"></i>}
-          growth={details?.users?.user_percent_change?.toString() || "0"}
+          growth={details?.groups?.group_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalGroups')}
           isActive={activeComponent === 'TotalGroups'}
         />
@@ -163,7 +163,7 @@ const Page: FC = () => {
           title="Total Accounts Deleted"
           value={details?.deletedUsers?.total_deleted_users || 0}
           icon={<i className="fas fa-check-circle"></i>}
-          growth={details?.posts?.post_percent_change?.toString() || "0"}
+          growth={details?.deletedUsers?.deleted_users_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('TotalAccounts')}
           isActive={activeComponent === 'TotalAccounts'}
         />
@@ -171,7 +171,7 @@ const Page: FC = () => {
           title="Total Accounts Suspended"
           value={details?.suspended_users?.total_suspended_users || 0}
           icon={<i className="fas fa-flag"></i>}
-          growth={details?.posts?.post_percent_change?.toString() || "0"}
+          growth={details?.suspended_users?.suspended_users_percent_change?.toString() || "0"}
           onClick={() => setActiveComponent('AccountsSuspended')}
           isActive={activeComponent === 'AccountsSuspended'}
         />

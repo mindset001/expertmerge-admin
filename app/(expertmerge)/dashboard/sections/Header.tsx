@@ -130,7 +130,7 @@ const DashboardStats: FC = () => {
         title="Total accounts suspended"
         value={details?.suspended_users?.total_suspended_users || 0}
         icon={<i className="fas fa-flag"></i>}
-        growth={details?.resources?.resources_percent_change?.toString() || "0"}
+        growth={details?.suspended_users?.suspended_users_percent_change?.toString() || "0"}
       />
     </div>
   );
