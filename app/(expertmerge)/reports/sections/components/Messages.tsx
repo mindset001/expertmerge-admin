@@ -194,7 +194,9 @@ export default function MessagesList() {
           </div>
         </div>
       </div>
-
+      <div>
+        <h1>Reported Users</h1>
+      </div>
       <Table dataSource={messages} columns={columns} rowKey="id" pagination={false} />
 
       <Modal

@@ -24,6 +24,17 @@ export const getReport = async () => {
     }
 }
 
+export const getGroupReport = async () => {
+    try {
+        const res: AxiosResponse<{payload: any}> = await APIService.get('/admin/reported-groups')
+   
+        return { response: res.data.payload }
+    } catch (error: any) {
+        return { error:  error.message }
+
+    }
+}
+
 export const getSingleReport = async (data: { reportId: string }) => {
     try {
       const res: AxiosResponse<{ payload: any }> = await APIService.get(`/admin/single-report/${data.reportId}`);
