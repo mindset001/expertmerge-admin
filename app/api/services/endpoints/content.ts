@@ -124,3 +124,13 @@ export const deleteAdmin= async (admin: string) => {
       return { error: error.message };
     }
   };
+
+
+  export const blockGroup= async (groupId: string) => {
+    try {
+      const res: AxiosResponse<{ payload: any }> = await APIService.put(`/admin/block-group/${groupId}`);
+      return { response: res.data.payload };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
