@@ -16,8 +16,13 @@ function General() {
   const { user } = useSelector((state: RootState) => state.profileSlice);
 
   useEffect(() => {
-    // Update checked state if the user object changes
-    setChecked(user?.professional || false);
+    const savedState = localStorage.getItem("professional");
+    if (savedState !== null) {
+      setChecked(savedState === "true");
+    } else if (user?.professional !== undefined) {
+      setChecked(user.professional);
+      localStorage.setItem("professional", String(user.professional));
+    }
   }, [user]);
 
   function formatDOB(dob: string): string {
@@ -27,9 +32,8 @@ function General() {
 
   const handleToggleChange = async (checked: boolean) => {
     setChecked(checked);
-    console.log('Toggle switch is:', checked ? 'On' : 'Off');
+    localStorage.setItem("professional", String(checked)); // Persist state
 
-    // Call toggleView with the updated user settings
     const result = await toggleView({
       id: user.id,
       allowedToViewAll: checked,
@@ -37,10 +41,11 @@ function General() {
 
     if (result.response) {
       console.log("View status updated successfully");
-      setIsModalVisible(true); // Show success modal
+      setIsModalVisible(true);
     } else {
       console.error("Failed to update view status:", result.error);
       setChecked(!checked); // Revert toggle if API call fails
+      localStorage.setItem("professional", String(!checked));
     }
   };
 
