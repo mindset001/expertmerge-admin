@@ -5,11 +5,23 @@ import ExpertButton from "@/components/buttons/ExpertButton";
 import Cert from '@/assets/certificate.jpg'
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { blockUser } from "@/app/api/services/endpoints/signup";
+import { message } from "antd";
 // Define the work experience data type
 
 
 const Archievements = () => {
   const { user } = useSelector((state: RootState) => state.profileSlice);
+  const handleBlockUser = async () => {
+    const result = await blockUser({ userId: user.id });
+    if (result.response) {
+      console.log("User blocked successfully.");
+      message.success("User has been blocked.");
+    } else {
+      console.error("Failed to block user:", result.error);
+      message.error("Failed to block the user. Please try again.", result.error);
+    }
+  };
   return (
     <div className="work-experience-list">
       <h2 className="text-[28px] font-bold text-[#1D2739] mb-6">Professional Archievements</h2>
@@ -53,9 +65,10 @@ const Archievements = () => {
           </div>
         </div>
       ))}
-      <ExpertButton
-      text='Block Clifford'
-      />
+     <ExpertButton
+            text={`Block ${user?.name || "User"}`}
+            onClick={handleBlockUser}
+          />
       </div>
     </div>
   );
