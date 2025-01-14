@@ -11,6 +11,7 @@ import { getUsers } from "@/app/api/services/endpoints/content";
 type Profile = {
     key: number;
     name: string;
+    id: string;
    
     location: {
         city:string;
@@ -41,10 +42,11 @@ const ProfessionalProfile = () => {
                     name: `${user.firstName} ${user.lastName}`,
                     address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
                     phone: user.phone,
+                    id: user._id,
                     email: user.email,
                     about: user.about || "N/A",
                     post: user.post || "N/A",
-                    profileLink: user.profileLink || "N/A",
+                    profileLink: user._id ? `http://www.expertsmerge.com/profile/${user._id}` : "N/A",
                     imageUrl: user.profilePicture || Avatar,
                 }));
                 setDetails(dataWithKeys);
@@ -117,7 +119,7 @@ const ProfessionalProfile = () => {
                         onClick: () => showProfileModal(record),
                     };
                 }}
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 20 }}
                 rowClassName="cursor-pointer"
             />
             <Modal

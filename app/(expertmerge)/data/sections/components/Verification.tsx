@@ -62,7 +62,7 @@ export default function Verification() {
           address: user.location ? `${user.location.city}, ${user.location.country}` : "N/A",
           phone: user.phone,
           email: user.email,
-          link: `https://experts-frontend-omega.vercel.app/profile/${user._id}`,
+          link: `http://www.expertsmerge.com/profile/${user._id}`,
           about: user.about || "N/A",
           post: user.post || "N/A",
           profileLink: user.profileLink || "N/A",
