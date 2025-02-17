@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Select, Table, Pagination, Modal } from 'antd';
+import { Button, Input, Select, Table, Pagination, Modal, message } from 'antd';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icons/Icon';
-import { getVerification } from '@/app/api/services/endpoints/signup';
+import { getVerification, verifyUser } from '@/app/api/services/endpoints/signup';
+import Image from 'next/image';
 
 // Sample data (replace with real data or API)
 type Group = {
+  id: string;
   key: number;
   name: string;
   address: string;
@@ -15,6 +17,9 @@ type Group = {
   about: string;
   post: string;
   profileLink: string;
+  frontImage: string;
+  backImage: string;
+
 };
   
 
@@ -25,8 +30,9 @@ export default function Verification() {
   const [sortOrder, setSortOrder] = useState('Newest reported');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisible2, setIsModalVisible2] = useState(false);
-
+  const [selectedUser, setSelectedUser] = useState<Group | null>(null);
   const [details, setDetails] = useState<Group[]>([]);
+    const [verifyUserId, setVerifyUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +40,7 @@ export default function Verification() {
       if (response) {
         console.log("API Response:", response.data);
         const dataWithKeys = response.data.map((user: any, index: number) => ({
-          key: user.id,
+          key: user._id,
           name: `${user.firstName} ${user.lastName}`,
           address: `${user.location.city}, ${user.location.country}`,
           phone: user.phone,
@@ -42,6 +48,9 @@ export default function Verification() {
           about: user.about || "N/A",
           post: user.post || "N/A",
           profileLink: user.profileLink || "N/A",
+          frontImage: user.verification.front,
+          backImage: user.verification.back,
+          verificationState: user.verification.state,
         }));
         setDetails(dataWithKeys);
       } else {
@@ -51,12 +60,25 @@ export default function Verification() {
     fetchData();
   }, []);
 
+  const openModal = (userId: string) => {
+    console.log("Verifying User ID:", userId); // Debugging log
+    setVerifyUserId(userId);
+    setIsModalVisible(true);
+  };
+  
 
+  
   const closeModal = () => {
     setIsModalVisible(false);
   };
+  const openDocsModal = (user: Group) => {
+    setSelectedUser(user);
+    setIsModalVisible2(true);
+  };
+  
   const closeModal2 = () => {
     setIsModalVisible2(false);
+    setSelectedUser(null);
   };
   // Handle pagination change
   const handlePageChange = (page: number) => {
@@ -77,6 +99,24 @@ export default function Verification() {
     currentPage * pageSize
   );
 
+
+  const [loading, setLoading] = useState(false);
+
+  const handleVerifyUser = async () => {
+    if (verifyUserId) {
+      const { response, error } = await verifyUser({ userId: verifyUserId });
+      if (response) {
+        // setDetails(details.filter((user) => user.id !== verifyUserId)); 
+        // Remove verified user from list
+        message.success("Account verified successfully!"); // Display success message
+        closeModal();
+      } else {
+        message.error("Failed to verify account. Please try again."); // Display error message
+        console.error("Verification error:", error);
+      }
+    }
+  };
+  
   const columns = [
     { title: 'SN', dataIndex: 'id', key: 'id', width: '10%' },
     { title: 'Name', dataIndex: 'name', key: 'name', width: '20%' },
@@ -87,23 +127,32 @@ export default function Verification() {
         title: 'Documents',
         dataIndex: 'action',
         render: (_: any, record: any) => (
-          <div  onClick={()=> setIsModalVisible2(true)}>
+          <div  onClick={() => openDocsModal(record)} className='cursor-pointer'>
            <p> View Docs</p>
             </div>
           
         ),
         width: '10%',
       },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      render: (_: any, record: any) => (
-        <ExpertButton text="Verify Account" 
-          onClick={()=> setIsModalVisible(true)}
-        />
-      ),
-      width: '10%',
-    },
+      {
+        title: 'Action',
+        dataIndex: 'action',
+        render: (_: any, record: any) => (
+          record.verificationState ? (
+            <ExpertButton 
+            text="Verified" 
+            disabled
+          />
+          ) : (
+            <ExpertButton 
+              text="Verify Account" 
+              loading={loading} 
+              onClick={() => openModal(record.key)} 
+            />
+          )
+        ),
+        width: '10%',
+      },
   ];
 
   return (
@@ -155,53 +204,63 @@ export default function Verification() {
         />
       </div>
 
-      <Modal   
-      // title="Report"
-  visible={isModalVisible}
-  onCancel={closeModal}
-  footer={null}
-  width={500}
-  >
-       <div className='flex flex-col justify-center items-center'>
-       <div>
-          <Icon name='verified'/>
+      <Modal
+        visible={isModalVisible}
+        onCancel={closeModal}
+        footer={null}
+        width={500}
+      >
+        <div className="flex flex-col justify-center items-center">
+          <Icon name="verified" />
+          <div className="flex flex-col items-center text-center">
+            <h1 className="text-[#1D2739] text-[20px] font-[500]">Account Verification</h1>
+            <p className="text-[#645D5D] text-[14px] font-[400]">
+              Are you sure you want to verify this account?
+            </p>
+          </div>
+          <div className="w-[80%] flex gap-4 mt-4">
+            <ExpertButton outlined text="No" fullWidth onClick={closeModal} />
+            <ExpertButton text="Yes, Verify" fullWidth onClick={handleVerifyUser} />
+          </div>
         </div>
-        <div className='flex flex-col items-center text-center'>
-          <h1 className='text-[#1D2739] text-[20px] font-[500]'>Account verified!</h1>
-          <p className='text-[#645D5D] text-[14px] font-[400]'>You have successfully verified Minerva Barnett account</p>
-        </div>
-       </div>
       </Modal>
 
-      <Modal   
-      // title="Report"
+      <Modal
   visible={isModalVisible2}
   onCancel={closeModal2}
   footer={null}
   width={500}
-  >
-       <div className='flex flex-col '>
-       <div className='flex gap-4'>
-         <h2 className='text-[#667185] font-[700] text-[15px]'>Documents</h2>
-         <div className='bg-[#0A424A] rounded-full h-[24px] w-[24px] flex justify-center items-center'><p className='text-[#FFFFFF] text-[11px] font-[600]'>2</p></div>
+>
+  {selectedUser && (
+    <div className='flex flex-col '>
+      <div className='flex gap-4'>
+        <h2 className='text-[#667185] font-[700] text-[15px]'>Documents</h2>
+        <div className='bg-[#0A424A] rounded-full h-[24px] w-[24px] flex justify-center items-center'>
+          <p className='text-[#FFFFFF] text-[11px] mt-2 font-[600] flex justify-center items-center'>2</p>
         </div>
-        <div className='flex flex-col items-center mt-10'>
-          <div>
-            <h3 className='text-[#667185] font-[700] text-[15px]'>Front</h3>
-            <div className='bg-[#666562] w-[430px] h-[229px] rounded-[14px]'>
+      </div>
 
-          </div>
-          </div>
-          
-          <div>
-            <h3 className='text-[#667185] font-[700] text-[15px] mt-6'>Back</h3>
-            <div className='bg-[#F6F1EA] w-[430px] h-[229px] rounded-[14px]'>
-
-          </div>
+      <div className='flex flex-col items-center mt-10'>
+        <div>
+          <h3 className='text-[#667185] font-[700] text-[15px]'>Front</h3>
+          <div className='bg-[#666562] w-[430px] h-[229px] rounded-[14px] flex justify-center items-center'>
+            <Image src={selectedUser.frontImage} alt='Front Document' width={430} height={229}  className='w-[410px] h-[209px]'/>
           </div>
         </div>
-       </div>
-      </Modal>
+
+        <div>
+          <h3 className='text-[#667185] font-[700] text-[15px] mt-6'>Back</h3>
+          <div className='bg-[#F6F1EA] w-[430px] h-[229px] rounded-[14px] flex justify-center items-center'>
+            <Image src={selectedUser.backImage} alt='Back Document' width={430} height={229} className='w-[410px] h-[209px]'/>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</Modal>
+
     </div>
   );
 }
+
+

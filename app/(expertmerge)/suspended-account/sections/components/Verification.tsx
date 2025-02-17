@@ -3,7 +3,7 @@ import { Button, Input, Select, Table, Pagination, Modal, message } from 'antd';
 import ExpertButton from '@/components/buttons/ExpertButton';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Icon from '@/components/icons/Icon';
-import { getSuspendedUsers, verifyUser } from '@/app/api/services/endpoints/signup';
+import { getSuspendedUsers, restoreUser, verifyUser } from '@/app/api/services/endpoints/signup';
 
 type Group = {
   key: number;
@@ -59,19 +59,21 @@ export default function Suspended() {
     setVerifyUserId(null);
   };
 
-  const handleVerifyUser = async () => {
-    if (verifyUserId) {
-      const { response, error } = await verifyUser({ userId: verifyUserId });
-      if (response) {
-        setDetails(details.filter((user) => user.id !== verifyUserId)); // Remove verified user from list
-        message.success("Account verified successfully!"); // Display success message
-        closeModal();
-      } else {
-        message.error("Failed to verify account. Please try again."); // Display error message
-        console.error("Verification error:", error);
-      }
+  const handleRestoreUser = async () => {
+    if (!verifyUserId) return;
+  
+    const { response, error } = await restoreUser(verifyUserId);
+  
+    if (response) {
+      message.success("User restored successfully!");
+      setDetails(details.filter((user) => user.id !== verifyUserId)); // Remove restored user from the list
+      closeModal();
+    } else {
+      message.error("Failed to restore user. Please try again.");
+      console.error("Restore error:", error);
     }
   };
+  
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -106,7 +108,7 @@ export default function Suspended() {
       title: 'Action',
       dataIndex: 'action',
       render: (_: any, record: any) => (
-        <ExpertButton text="Verify Account" onClick={() => openModal(record.id)} />
+        <ExpertButton text="Restore" onClick={() => openModal(record.id)} />
       ),
       width: '10%',
     },
@@ -143,14 +145,14 @@ export default function Suspended() {
         <div className="flex flex-col justify-center items-center">
           <Icon name="verified" />
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-[#1D2739] text-[20px] font-[500]">Account Verification</h1>
+            <h1 className="text-[#1D2739] text-[20px] font-[500]">Account Restoration</h1>
             <p className="text-[#645D5D] text-[14px] font-[400]">
-              Are you sure you want to verify this account?
+              Are you sure you want to restore this account?
             </p>
           </div>
           <div className="w-[80%] flex gap-4 mt-4">
             <ExpertButton outlined text="No" fullWidth onClick={closeModal} />
-            <ExpertButton text="Yes, Verify" fullWidth onClick={handleVerifyUser} />
+            <ExpertButton text="Yes, Restore" fullWidth onClick={handleRestoreUser} />
           </div>
         </div>
       </Modal>

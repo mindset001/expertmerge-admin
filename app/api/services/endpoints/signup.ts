@@ -179,7 +179,18 @@ export const verifyUser = async (data: { userId: string }) => {
     }
   };
   
-  
 
 
+  export const restoreUser= async (data: {
+
+  }) => {
+     try {
+         const res: AxiosResponse<{payload: any}> = await APIService.put('/admin/restore-approval')
+    
+         return { response: res.data.payload }
+     } catch (error: any) {
+         return { error:  error.message }
+ 
+     }
+ }
  
